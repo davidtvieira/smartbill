@@ -1,15 +1,15 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
+import Button from "../components/Button"; // Importa o botão
+import styles from "../styles"; // Importa os estilos
 
 export default function Index() {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
+    <View style={styles.background}>
+      <Button
+        title="Click Me"
+        onPress={() => console.log("Button clicked")}
+        textStyle={undefined}
+      />
     </View>
   );
 }
