@@ -3,19 +3,10 @@ import { Text, View } from "react-native";
 import Button from "../../components/buttons/Button";
 
 export default function HomeScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation() as any;
 
   return (
-    <View
-      style={{
-        padding: 20,
-        flex: 1,
-        justifyContent: "flex-start",
-        alignItems: "center",
-        backgroundColor: "#273C47",
-        gap: 20,
-      }}
-    >
+    <View style={{ width: "100%", gap: 20 }}>
       <View style={{ width: "100%" }}>
         <Text
           style={{
