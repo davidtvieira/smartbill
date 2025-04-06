@@ -1,36 +1,15 @@
+import TopText from "@/components/TopText/TopTex";
+import Button from "@/components/buttons/Button";
 import { useNavigation } from "@react-navigation/native";
-import { Text, View } from "react-native";
-import Button from "../../components/buttons/Button";
+import { View } from "react-native";
 
 export default function HomeScreen() {
   const navigation = useNavigation() as any;
 
   return (
-    <View style={{ width: "100%", gap: 20 }}>
-      <View style={{ width: "100%" }}>
-        <Text
-          style={{
-            textAlign: "center",
-            fontSize: 30,
-            color: "#F47A64",
-            fontWeight: "bold",
-          }}
-        >
-          A minha
-        </Text>
-        <Text
-          style={{
-            textAlign: "center",
-            fontSize: 50,
-            color: "#fff",
-            fontWeight: "bold",
-          }}
-        >
-          Smart Bill
-        </Text>
-      </View>
-
-      <View style={{ width: "100%", gap: 10 }}>
+    <View style={{ gap: 20 }}>
+      <TopText first="A minha" second="Smart Bill" />
+      <View style={{ gap: 10 }}>
         <Button
           title="Smart Bill"
           onPress={() => navigation.navigate("SmartBill")}

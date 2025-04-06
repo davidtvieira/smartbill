@@ -1,9 +1,10 @@
 import * as ImagePicker from "expo-image-picker";
 import { View } from "react-native";
-import Button from "../buttons/Button";
+import Button from "../Button";
+import styles from "./styleImagePickerMenu";
 
 interface ImagePickerMenuProps {
-  onImagePicked: (uri: string) => void; // Callback to send the image URI back to the parent
+  onImagePicked: (uri: string) => void;
 }
 
 export default function ImagePickerMenu({
@@ -37,7 +38,7 @@ export default function ImagePickerMenu({
   };
 
   return (
-    <View style={{ gap: 10 }}>
+    <View style={styles.imagepickermenu}>
       <Button title="Tirar uma foto" onPress={takePhoto} />
       <Button title="Escolhe uma imagem da galeria" onPress={pickImage} />
     </View>
