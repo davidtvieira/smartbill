@@ -12,7 +12,7 @@ export default function HomeScreen() {
       <View style={{ gap: 10 }}>
         <Button
           title="Smart Bill"
-          onPress={() => navigation.navigate("SmartBill")}
+          onPress={() => navigation.navigate("AddSmartBill")}
           variant="primary"
         />
         <View

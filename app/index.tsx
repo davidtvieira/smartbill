@@ -1,15 +1,27 @@
-// index.tsx
+import { initDB } from "@/services/database/db";
 import {
   NavigationContainer,
   NavigationIndependentTree,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useEffect } from "react";
+import AddSmartBill from "./screens/AddSmartBill";
 import HomeScreen from "./screens/HomeScreen";
-import ImagePicker from "./screens/ImagePicker";
 import SettingUpSmartBill from "./screens/SettingUpSmartBill";
 const Stack = createNativeStackNavigator();
 
 export default function Index() {
+  useEffect(() => {
+    const startDB = async () => {
+      try {
+        await initDB();
+      } catch (err) {
+        console.error("Error during db startup: ", err);
+      }
+    };
+    startDB();
+  }, []);
+
   return (
     <NavigationIndependentTree>
       <NavigationContainer>
@@ -26,7 +38,7 @@ export default function Index() {
           }}
         >
           <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="SmartBill" component={ImagePicker} />
+          <Stack.Screen name="AddSmartBill" component={AddSmartBill} />
           <Stack.Screen
             name="SettingUpSmartBill"
             component={SettingUpSmartBill}

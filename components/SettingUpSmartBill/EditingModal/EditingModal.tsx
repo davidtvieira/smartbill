@@ -1,22 +1,27 @@
-import { SmartBillData } from "@/components/API/api_call";
+import { SmartBillData } from "@/app/screens/SettingUpSmartBill";
 import Button from "@/components/buttons/Button";
 import React, { useEffect, useState } from "react";
+import styles from "./styleEditingModal";
+
 import {
   Keyboard,
   Modal,
   Pressable,
+  Text,
   TextInput,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
 
 interface ReceiptItem {
-  titulo: string;
-  quantidade: number;
-  preco_unitario: number;
+  name: string;
+  quantity: number;
+  unit_price: number;
+  category: string;
+  sub_category: string;
 }
 
-const FieldEditModal: React.FC<{
+const EditingModal: React.FC<{
   visible: boolean;
   onClose: () => void;
   editingField: string | null;
@@ -36,10 +41,12 @@ const FieldEditModal: React.FC<{
   onItemEditFinish,
 }) => {
   const [tempValue, setTempValue] = useState<string>("");
-  const [tempItem, setTempItem] = useState({
-    titulo: "",
-    quantidade: 0,
-    preco_unitario: 0,
+  const [tempItem, setTempItem] = useState<ReceiptItem>({
+    name: "",
+    quantity: 0,
+    unit_price: 0,
+    category: "",
+    sub_category: "",
   });
 
   const itemIndex = editingField?.startsWith("item")
@@ -50,9 +57,11 @@ const FieldEditModal: React.FC<{
     if (!visible) {
       setTempValue("");
       setTempItem({
-        titulo: "",
-        quantidade: 0,
-        preco_unitario: 0,
+        name: "",
+        quantity: 0,
+        unit_price: 0,
+        category: "",
+        sub_category: "",
       });
       return;
     }
@@ -63,9 +72,11 @@ const FieldEditModal: React.FC<{
       const item = editedData.items?.[itemIndex];
       setTempItem(
         item || {
-          titulo: "",
-          quantidade: 0,
-          preco_unitario: 0,
+          name: "",
+          quantity: 0,
+          unit_price: 0,
+          category: "",
+          sub_category: "",
         }
       );
     } else if (editingField && !isItemEditing) {
@@ -82,23 +93,16 @@ const FieldEditModal: React.FC<{
 
   const handleUpdate = () => {
     if (isItemEditing && itemIndex !== null) {
-      onItemEdit(itemIndex, "titulo", tempItem.titulo);
-      onItemEdit(itemIndex, "quantidade", String(tempItem.quantidade));
-      onItemEdit(itemIndex, "preco_unitario", String(tempItem.preco_unitario));
+      onItemEdit(itemIndex, "name", tempItem.name);
+      onItemEdit(itemIndex, "quantity", String(tempItem.quantity));
+      onItemEdit(itemIndex, "unit_price", String(tempItem.unit_price));
+      onItemEdit(itemIndex, "category", tempItem.category);
+      onItemEdit(itemIndex, "sub_category", tempItem.sub_category);
       onItemEditFinish();
     } else if (editingField) {
       onFieldChange(editingField as keyof SmartBillData, tempValue);
     }
     onClose();
-  };
-
-  const inputStyle = {
-    color: "white",
-    backgroundColor: "#2C4450",
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderRadius: 8,
-    marginBottom: 10,
   };
 
   return (
@@ -127,47 +131,81 @@ const FieldEditModal: React.FC<{
             }}
           >
             {!isItemEditing && editingField && (
-              <TextInput
-                value={tempValue}
-                onChangeText={setTempValue}
-                placeholder={editingField}
-                style={inputStyle}
-              />
+              <>
+                <Text style={styles.label}>{editingField}</Text>
+                <TextInput
+                  value={tempValue}
+                  onChangeText={setTempValue}
+                  placeholder={editingField}
+                  placeholderTextColor="#a0a0a0"
+                  style={styles.input}
+                />
+              </>
             )}
 
             {isItemEditing && itemIndex !== null && (
               <>
+                <Text style={styles.label}>Nome do Produto</Text>
                 <TextInput
-                  value={tempItem.titulo}
+                  value={tempItem.name}
                   onChangeText={(text) =>
-                    setTempItem((prev) => ({ ...prev, titulo: text }))
+                    setTempItem((prev) => ({ ...prev, name: text }))
                   }
-                  placeholder="Título do Produto"
-                  style={inputStyle}
+                  placeholder="Nome do Produto"
+                  placeholderTextColor="#a0a0a0"
+                  style={styles.input}
                 />
+
+                <Text style={styles.label}>Quantidade</Text>
                 <TextInput
-                  value={String(tempItem.quantidade)}
+                  value={String(tempItem.quantity)}
                   onChangeText={(text) =>
                     setTempItem((prev) => ({
                       ...prev,
-                      quantidade: parseInt(text) || 0,
+                      quantity: parseInt(text) || 0,
                     }))
                   }
                   placeholder="Quantidade"
+                  placeholderTextColor="#a0a0a0"
                   keyboardType="numeric"
-                  style={inputStyle}
+                  style={styles.input}
                 />
+
+                <Text style={styles.label}>Preço Unitário</Text>
                 <TextInput
-                  value={String(tempItem.preco_unitario)}
+                  value={String(tempItem.unit_price)}
                   onChangeText={(text) =>
                     setTempItem((prev) => ({
                       ...prev,
-                      preco_unitario: parseFloat(text) || 0,
+                      unit_price: parseFloat(text) || 0,
                     }))
                   }
                   placeholder="Preço Unitário"
+                  placeholderTextColor="#a0a0a0"
                   keyboardType="numeric"
-                  style={inputStyle}
+                  style={styles.input}
+                />
+
+                <Text style={styles.label}>Categoria</Text>
+                <TextInput
+                  value={tempItem.category}
+                  onChangeText={(text) =>
+                    setTempItem((prev) => ({ ...prev, category: text }))
+                  }
+                  placeholder="Categoria"
+                  placeholderTextColor="#a0a0a0"
+                  style={styles.input}
+                />
+
+                <Text style={styles.label}>Subcategoria</Text>
+                <TextInput
+                  value={tempItem.sub_category}
+                  onChangeText={(text) =>
+                    setTempItem((prev) => ({ ...prev, sub_category: text }))
+                  }
+                  placeholder="Subcategoria"
+                  placeholderTextColor="#a0a0a0"
+                  style={styles.input}
                 />
               </>
             )}
@@ -184,4 +222,4 @@ const FieldEditModal: React.FC<{
   );
 };
 
-export default FieldEditModal;
+export default EditingModal;

@@ -1,19 +1,5 @@
 import Constants from "expo-constants";
 
-interface ReceiptItem {
-  titulo: string;
-  quantidade: number;
-  preco_unitario: number;
-}
-
-export interface SmartBillData {
-  local: string;
-  estabelecimento: string;
-  data: string;
-  hora: string;
-  items: ReceiptItem[];
-}
-
 const apiKey = Constants.expoConfig?.extra?.apiKey; //@.env
 
 const prompt = `
@@ -23,14 +9,16 @@ const prompt = `
     
     {
       "local": "cidade onde foi feita a compra",
-      "estabelecimento": "nome do estabelecimento",
-      "data": "formato DD-MM-AAAA",
-      "hora": "formato HH:MM",
+      "establishment": "nome do estabelecimento",
+      "date": "formato DD-MM-AAAA",
+      "time": "formato HH:MM",
       "items": [
         {
-            "quantidade": número inteiro,
-          "titulo": "nome do produto",
-          "preco_unitario": número decimal
+          "name": "nome do produto",
+          "quantity": número inteiro,
+          "unit_price": número decimal
+          "category: "nome da categoria",
+          "sub_category: "nome da subcategoria",
         }
       ]
     }
@@ -38,13 +26,58 @@ const prompt = `
     Completa nomes incompletos (ex: "Lisbo" -> "Lisboa"). 
     Não uses caracteres inválidos como "/" ou "|". 
     No campo "local", apenas a cidade, não incluas moradas ou números de porta.
-    No nome dos produtos, apenas inclui o nome do produto, sem quantidades no nome.
+    No nome dos produtos, apenas inclui o nome do produto, sem quantidades no nome, a quantidade tem o seu campo próprio.
+    Primeiro deves definir a subcategoria e depois a categoria respectiva a essa subcategoria.
+    As categorias e subcategorias devem ser uma das pré definidas:
+    categorias: 
+      Comida, Bebida, Higiene, Casa e Animais. 
+
+    subcategorias: 
+      Comida:
+        Carne
+        Peixe
+        Mercearia
+        Doces e Sobremesas
+        Pastelaria
+        Queijos e Charcutaria
+        Laticinios
+      Bebidas:
+        Agua
+        Sumos e Refrigerantes
+        Bebidas Alcoolicas
+        Bebidas Quentes
+      Higiene:
+        Higiene Pessoal
+      Casa:
+        Limpeza
+        Decoracao
+        Mobilia
+        Jardim
+        Construcao e Reformas
+        Eletrônica
+        Materiais de Construcao
+      Animais:
+        Alimentacao para Animais
+        Higiene e Acessorios para Animais
+
+      Quando achares que o produto não se encaixa em nenhuma dessas subcategorias atribui aquela que achas mais proxima da verdadeira, nunca deixes nenhum campo vazio.
+
     Sempre que encontrares palavras que não reconheças junto de outras, ignora, 
   `;
 
-export async function processReceiptImage(
-  imageUri: string
-): Promise<SmartBillData> {
+export async function Api_Call(imageUri: string): Promise<{
+  local: string;
+  establishment: string;
+  date: string;
+  time: string;
+  items: {
+    name: string;
+    quantity: number;
+    unit_price: number;
+    category: string;
+    sub_category: string;
+  }[];
+}> {
   const response = await fetch(imageUri);
   const blob = await response.blob();
 
@@ -95,36 +128,4 @@ export async function processReceiptImage(
 
   const extractedText = result.candidates[0].content.parts[0].text;
   return JSON.parse(extractedText);
-}
-
-export function updateSmartBillData(
-  currentData: SmartBillData,
-  field: keyof SmartBillData,
-  value: string
-): SmartBillData {
-  return {
-    ...currentData,
-    [field]: value,
-  };
-}
-
-export function updateItemInSmartBill(
-  currentData: SmartBillData,
-  index: number,
-  field: keyof ReceiptItem,
-  value: string
-): SmartBillData {
-  const updatedItems = [...currentData.items];
-  const numericValue =
-    field === "quantidade" ? parseInt(value) : parseFloat(value);
-
-  if (field === "quantidade" || field === "preco_unitario") {
-    updatedItems[index][field] = isNaN(numericValue)
-      ? (0 as never)
-      : (numericValue as never);
-  } else {
-    updatedItems[index][field] = value as never;
-  }
-
-  return { ...currentData, items: updatedItems };
 }
