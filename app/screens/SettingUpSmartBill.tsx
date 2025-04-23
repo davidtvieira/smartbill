@@ -8,6 +8,8 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useState } from "react";
 import { ScrollView, View } from "react-native";
 
+import { insertSmartBill } from "@/services/database/insert";
+
 export type SmartBillData = {
   local: string;
   establishment: string;
@@ -33,9 +35,16 @@ export default function SettingUpSmartBill() {
   const [modalVisible, setModalVisible] = useState(false);
   const [isItemEditing, setIsItemEditing] = useState(false);
 
-  const handleSaveSmartBill = () => {
-    const billData = JSON.stringify(editedData, null, 2);
-    console.log("New Smart Bill:\n", billData);
+  const handleSaveSmartBill = async () => {
+    if (!editedData) return;
+
+    try {
+      await insertSmartBill(editedData);
+      console.log("Smart Bill added successfully");
+      navigation.goBack();
+    } catch (error) {
+      console.error("Erro ao inserir Smart Bill:", error);
+    }
   };
 
   const handleFieldEdit = (field: keyof SmartBillData) => {
