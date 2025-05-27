@@ -27,10 +27,11 @@ const prompt = `
     Não uses caracteres inválidos como "/" ou "|". 
     No campo "local", apenas a cidade, não incluas moradas ou números de porta.
     No nome dos produtos, apenas inclui o nome do produto, sem quantidades no nome, a quantidade tem o seu campo próprio.
+    O preço de cada produto, normalmente, está do lado direito do talão. Inclui sempre o preço do lado direito do talão, mesmo que este esteja por debaixo do nome.
     Primeiro deves definir a subcategoria e depois a categoria respectiva a essa subcategoria.
     As categorias e subcategorias devem ser uma das pré definidas:
     categorias: 
-      Comida, Bebida, Higiene, Casa e Animais. 
+      Comida, Bebida, Higiene, Casa, Animais e Farmácia. 
 
     subcategorias: 
       Comida:
@@ -59,6 +60,11 @@ const prompt = `
       Animais:
         Alimentacao para Animais
         Higiene e Acessorios para Animais
+      Farmácia:
+        Medicamentos e Tratamentos
+        Suplementos e Vitaminas
+        Equipamentos Médicos e Primeiros Socorros
+
 
       Quando achares que o produto não se encaixa em nenhuma dessas subcategorias atribui aquela que achas mais proxima da verdadeira, nunca deixes nenhum campo vazio.
 

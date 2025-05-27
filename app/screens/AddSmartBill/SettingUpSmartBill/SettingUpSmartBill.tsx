@@ -1,14 +1,13 @@
-import Button from "@/components/buttons/Button";
+import Button from "@/components/Buttons/Button";
 import EditingModal from "@/components/SettingUpSmartBill/EditingModal/EditingModal";
 import ImagePreview from "@/components/SettingUpSmartBill/ImagePreview/ImagePreview";
 import ReviewPanel from "@/components/SettingUpSmartBill/ReviewPanel";
-import TopText from "@/components/TopText/TopTex";
+import TopText from "@/components/TopText/TopText";
 import { Api_Call } from "@/services/API/api_call";
+import { insertSmartBill } from "@/services/database/insert";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useState } from "react";
 import { ScrollView, View } from "react-native";
-
-import { insertSmartBill } from "@/services/database/insert";
 
 export type SmartBillData = {
   local: string;
@@ -41,7 +40,7 @@ export default function SettingUpSmartBill() {
     try {
       await insertSmartBill(editedData);
       console.log("Smart Bill added successfully");
-      navigation.goBack();
+      navigation.navigate("Home" as never);
     } catch (error) {
       console.error("Erro ao inserir Smart Bill:", error);
     }

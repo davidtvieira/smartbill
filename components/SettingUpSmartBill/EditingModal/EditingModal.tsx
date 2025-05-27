@@ -1,5 +1,5 @@
-import { SmartBillData } from "@/app/screens/SettingUpSmartBill";
-import Button from "@/components/buttons/Button";
+import { SmartBillData } from "@/app/screens/AddSmartBill/SettingUpSmartBill/SettingUpSmartBill";
+import Button from "@/components/Buttons/Button";
 import React, { useEffect, useState } from "react";
 import styles from "./styleEditingModal";
 

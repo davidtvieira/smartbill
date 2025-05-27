@@ -1,6 +1,6 @@
-import Button from "@/components/buttons/Button";
-import ImagePickerMenu from "@/components/buttons/ImagePicker/ImagePickerMenu";
-import TopText from "@/components/TopText/TopTex";
+import Button from "@/components/Buttons/Button";
+import ImagePickerMenu from "@/components/Buttons/ImagePicker/ImagePickerMenu";
+import TopText from "@/components/TopText/TopText";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 export default function ImagePicker() {

@@ -1,8 +1,8 @@
-import { SmartBillData } from "@/app/screens/SettingUpSmartBill";
-import Button from "@/components/buttons/Button";
+import { SmartBillData } from "@/app/screens/AddSmartBill/SettingUpSmartBill/SettingUpSmartBill";
+import Button from "@/components/Buttons/Button";
+import DataButton from "@/components/Buttons/DataButton";
 import React from "react";
 import { Text, View } from "react-native";
-import DataButton from "../buttons/DataButton";
 
 interface Props {
   data: SmartBillData;
