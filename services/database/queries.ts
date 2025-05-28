@@ -18,9 +18,9 @@ export interface CategorySpending {
   total_spent: number;
 }
 
-export const getAllProducts = async (limit?: number): Promise<ProductResult[]> => {
+export const getAllProducts = async (limit?: number, offset: number = 0): Promise<ProductResult[]> => {
   try {
-    const limitClause = limit !== undefined ? `LIMIT ${limit}` : '';
+    const limitClause = limit !== undefined ? `LIMIT ${limit} OFFSET ${offset}` : '';
     const result = await db.getAllAsync<ProductResult>(`
       SELECT 
         p.id,
@@ -38,7 +38,7 @@ export const getAllProducts = async (limit?: number): Promise<ProductResult[]> =
       JOIN Establishment e ON sb.establishment_id = e.id
       JOIN Category c ON p.category_id = c.id
       LEFT JOIN Subcategory sc ON p.subcategory_id = sc.id
-      ORDER BY sb.purchase_date ASC, sb.purchase_time ASC
+      ORDER BY sb.purchase_date DESC, sb.purchase_time DESC
       ${limitClause}
     `);
     

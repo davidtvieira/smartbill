@@ -8,19 +8,16 @@ export default StyleSheet.create({
       justifyContent: "center",
     },
     chartContainer: {
+      flex:1,
       position: "relative",
       alignItems: "center",
       justifyContent: "center",
     },
     numberContainer: {
+      flex:1,
       position: "absolute",
       alignItems: "center",
       justifyContent: "center",
-    },
-    numberText: {
-      fontSize: 25,
-      fontWeight: "bold",
-      color: "white",
     },
   });
   

@@ -23,4 +23,8 @@ export default StyleSheet.create({
   disabled : {
     opacity: 0.5
   },
+
+  clear: {
+    backgroundColor: "transparent",
+  }
 });

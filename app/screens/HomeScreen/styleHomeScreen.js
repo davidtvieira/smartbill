@@ -20,7 +20,7 @@ export default StyleSheet.create({
   listContainer: {
     flex: 1,
     maxHeight: 300, 
-    marginBottom: 20,
+    paddingBottom:20
   },
   listContent: {
     gap: 10,

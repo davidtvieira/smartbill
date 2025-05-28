@@ -1,4 +1,4 @@
-import Button from "@/components/Buttons/Button";
+import Button from "@/components/Buttons/Button/Button";
 import ImagePickerMenu from "@/components/Buttons/ImagePicker/ImagePickerMenu";
 import TopText from "@/components/TopText/TopText";
 import { useNavigation } from "@react-navigation/native";

@@ -6,8 +6,9 @@ import {
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useEffect } from "react";
 import { StatusBar } from "react-native";
-import AddSmartBill from "./screens/AddSmartBill/AddSmartBill";
+import AddSmartBill from "./screens/AddSmartBill/AddSmartBill/AddSmartBill";
 import SettingUpSmartBill from "./screens/AddSmartBill/SettingUpSmartBill/SettingUpSmartBill";
+import FilterScreen from "./screens/FilterScreen/FilterScreen";
 import HomeScreen from "./screens/HomeScreen/HomeScreen";
 
 const Stack = createNativeStackNavigator();
@@ -48,6 +49,7 @@ export default function Index() {
               name="SettingUpSmartBill"
               component={SettingUpSmartBill}
             />
+            <Stack.Screen name="FilterScreen" component={FilterScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </NavigationIndependentTree>

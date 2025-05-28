@@ -1,6 +1,6 @@
 import * as ImagePicker from "expo-image-picker";
 import { View } from "react-native";
-import Button from "../Button";
+import Button from "../Button/Button";
 import styles from "./styleImagePickerMenu";
 
 interface ImagePickerMenuProps {

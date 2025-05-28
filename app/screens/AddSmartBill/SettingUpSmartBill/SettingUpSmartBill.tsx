@@ -1,4 +1,4 @@
-import Button from "@/components/Buttons/Button";
+import Button from "@/components/Buttons/Button/Button";
 import EditingModal from "@/components/SettingUpSmartBill/EditingModal/EditingModal";
 import ImagePreview from "@/components/SettingUpSmartBill/ImagePreview/ImagePreview";
 import ReviewPanel from "@/components/SettingUpSmartBill/ReviewPanel";

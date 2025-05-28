@@ -1,4 +1,4 @@
-import Button from "@/components/Buttons/Button";
+import Button from "@/components/Buttons/Button/Button";
 import React from "react";
 
 interface ReceiptItem {

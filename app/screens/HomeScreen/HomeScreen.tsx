@@ -1,7 +1,13 @@
-import Button from "@/components/Buttons/Button";
+import Button from "@/components/Buttons/Button/Button";
 import DonutGraph from "@/components/DonutGraph/DonutGraph";
 import TopText from "@/components/TopText/TopText";
-import { getAllProducts, ProductResult } from "@/services/database/queries";
+import {
+  CategorySpending,
+  getAllProducts,
+  getCurrentMonthCategorySpending,
+  getCurrentMonthTotalSpent,
+  ProductResult,
+} from "@/services/database/queries";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { FlatList, Text, View } from "react-native";
@@ -11,19 +17,30 @@ const HomeScreen = () => {
   const navigation = useNavigation() as any;
   const [products, setProducts] = useState<ProductResult[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [totalSpent, setTotalSpent] = useState<number>(0);
+  const [categorySpending, setCategorySpending] = useState<CategorySpending[]>(
+    []
+  );
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getAllProducts(20);
-        setProducts(data);
+        const [productsData, total, categories] = await Promise.all([
+          getAllProducts(10),
+          getCurrentMonthTotalSpent(),
+          getCurrentMonthCategorySpending(),
+        ]);
+
+        setProducts(productsData);
+        setTotalSpent(total);
+        setCategorySpending(categories);
       } catch (err) {
-        console.error("Failed to fetch products:", err);
-        setError("Failed to load products");
+        console.error("Failed to fetch data:", err);
+        setError("Failed to load data");
       }
     };
 
-    fetchProducts();
+    fetchData();
   }, []);
 
   const renderProductItem = ({ item }: { item: ProductResult }) => (
@@ -49,7 +66,11 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       <TopText first="A minha" second="Smart Bill" />
-      {products.length > 0 && <DonutGraph />}
+      <DonutGraph
+        totalSpent={totalSpent}
+        content={categorySpending}
+        size={250}
+      />
       <View>
         <Button
           title="Smart Bill"
@@ -66,6 +87,22 @@ const HomeScreen = () => {
             title="Dividir Despesas"
             onPress={() => console.log("Dividir Despesas clicked")}
             variant="disabled"
+          />
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Text style={{ fontSize: 25, fontWeight: "bold", color: "white" }}>
+            Produtos
+          </Text>
+          <Button
+            title="Ver Todos"
+            onPress={() => navigation.navigate("FilterScreen")}
+            variant="clear"
           />
         </View>
       </View>

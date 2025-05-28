@@ -1,16 +1,17 @@
-import {
-  getCurrentMonthCategorySpending,
-  getCurrentMonthTotalSpent,
-} from "@/services/database/queries";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Text, View } from "react-native";
 import PieChart from "react-native-pie-chart";
 import styles from "./styleDonutGraph";
 
-const DonutGraph = () => {
-  const [totalSpent, setTotalSpent] = useState<number>(0);
-  const [series, setSeries] = useState<{ value: number; color: string }[]>([]);
+interface DonutGraphProps {
+  totalSpent: number;
+  size: number;
+  content: Array<{
+    total_spent: number;
+  }>;
+}
 
+const DonutGraph = ({ totalSpent, size, content }: DonutGraphProps) => {
   const generateColor = (
     index: number,
     baseColor: string = "#F47A64"
@@ -33,46 +34,10 @@ const DonutGraph = () => {
     return `#${toHex(rDark)}${toHex(gDark)}${toHex(bDark)}`;
   };
 
-  useEffect(() => {
-    const fetchCategorySpending = async () => {
-      try {
-        const categories = await getCurrentMonthCategorySpending();
-        const total = categories.reduce(
-          (sum, item) => sum + item.total_spent,
-          0
-        );
-
-        if (total > 0) {
-          const formattedSeries = categories.map((item, index) => ({
-            value: item.total_spent,
-            color: generateColor(index),
-          }));
-
-          setSeries(formattedSeries);
-        }
-      } catch (error) {
-        console.error("Error fetching category spending:", error);
-      }
-    };
-
-    fetchCategorySpending();
-  }, []);
-
-  useEffect(() => {
-    const fetchCurrentMonthTotal = async () => {
-      try {
-        const total = await getCurrentMonthTotalSpent();
-        setTotalSpent(total);
-      } catch (error) {
-        console.error("Error fetching current month total:", error);
-      }
-    };
-
-    fetchCurrentMonthTotal();
-  }, []);
-
-  const size = 250;
-  const formattedTotal = totalSpent.toFixed(2);
+  const series = content.map((item, index) => ({
+    value: item.total_spent,
+    color: generateColor(index),
+  }));
 
   return (
     <View style={styles.container}>
@@ -81,7 +46,11 @@ const DonutGraph = () => {
           <PieChart widthAndHeight={size} series={series} cover={0.6} />
         )}
         <View style={styles.numberContainer}>
-          <Text style={styles.numberText}>{formattedTotal}€</Text>
+          <Text
+            style={{ fontSize: size / 10, fontWeight: "bold", color: "white" }}
+          >
+            {totalSpent.toFixed(2)}€
+          </Text>
         </View>
       </View>
     </View>
