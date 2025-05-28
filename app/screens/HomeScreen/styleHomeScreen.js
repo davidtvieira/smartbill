@@ -4,9 +4,7 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    
     paddingHorizontal: 16,
-    height: "30%",
   },
  
   buttonWrapper: {

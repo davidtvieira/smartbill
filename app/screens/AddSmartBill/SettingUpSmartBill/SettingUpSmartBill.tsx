@@ -1,6 +1,6 @@
 import Button from "@/components/Buttons/Button/Button";
-import EditingModal from "@/components/SettingUpSmartBill/EditingModal/EditingModal";
-import ImagePreview from "@/components/SettingUpSmartBill/ImagePreview/ImagePreview";
+import EditingModal from "@/components/EditingModal/EditingModal";
+import ImagePreview from "@/components/ImagePreview/ImagePreview";
 import ReviewPanel from "@/components/SettingUpSmartBill/ReviewPanel";
 import TopText from "@/components/TopText/TopText";
 import { Api_Call } from "@/services/API/api_call";

@@ -71,7 +71,7 @@ const HomeScreen = () => {
         content={categorySpending}
         size={250}
       />
-      <View>
+      <View style={{ flex: 1 }}>
         <Button
           title="Smart Bill"
           onPress={() => navigation.navigate("AddSmartBill")}
@@ -89,32 +89,37 @@ const HomeScreen = () => {
             variant="disabled"
           />
         </View>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Text style={{ fontSize: 25, fontWeight: "bold", color: "white" }}>
-            Produtos
-          </Text>
-          <Button
-            title="Ver Todos"
-            onPress={() => navigation.navigate("FilterScreen")}
-            variant="clear"
-          />
-        </View>
-      </View>
-
-      <View style={styles.listContainer}>
-        <FlatList
-          data={products}
-          renderItem={renderProductItem}
-          keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={styles.listContent}
-          showsVerticalScrollIndicator={true}
-        />
+        {products.length > 0 && (
+          <>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Text
+                style={{ fontSize: 25, fontWeight: "bold", color: "white" }}
+              >
+                Produtos
+              </Text>
+              <Button
+                title="Ver Todos"
+                onPress={() => navigation.navigate("FilterScreen")}
+                variant="clear"
+              />
+            </View>
+            <View style={styles.listContainer}>
+              <FlatList
+                data={products}
+                renderItem={renderProductItem}
+                keyExtractor={(item) => item.id.toString()}
+                contentContainerStyle={styles.listContent}
+                showsVerticalScrollIndicator={true}
+              />
+            </View>
+          </>
+        )}
       </View>
     </View>
   );

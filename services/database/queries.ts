@@ -1,6 +1,6 @@
 import db from './db';
 
-export interface ProductResult {
+export interface Product {
   id: number;
   name: string;
   quantity: number;
@@ -13,15 +13,34 @@ export interface ProductResult {
   subcategory_name: string | null;
 }
 
+
+export interface Establishment {
+  id: number;
+  name: string;
+  location: string;
+  total_spent: number;
+  purchase_count: number;
+}
+
+export interface SmartBill {
+  id: number;
+  purchase_date: string;
+  purchase_time: string;
+  establishment_name: string;
+  establishment_location: string | null;
+  total_amount: number;
+  product_count: number;
+}
+
 export interface CategorySpending {
   category_name: string;
   total_spent: number;
 }
 
-export const getAllProducts = async (limit?: number, offset: number = 0): Promise<ProductResult[]> => {
+export const getAllProducts = async (limit?: number, offset: number = 0): Promise<Product[]> => {
   try {
     const limitClause = limit !== undefined ? `LIMIT ${limit} OFFSET ${offset}` : '';
-    const result = await db.getAllAsync<ProductResult>(`
+    const result = await db.getAllAsync<Product>(`
       SELECT 
         p.id,
         p.name,
@@ -92,10 +111,10 @@ export const getCurrentMonthCategorySpending = async (): Promise<CategorySpendin
       ORDER BY total_spent DESC
     `, [firstDayOfMonth]);
     
-    return result;
+    return result || [];
   } catch (error) {
     console.error('Error fetching category spending:', error);
-    throw error;
+    return [];
   }
 };
 
@@ -113,11 +132,58 @@ export const getAllCategoriesSpending = async (): Promise<CategorySpending[]> =>
       ORDER BY total_spent DESC
     `);
     
-    return result;
+    return result || [];
   } catch (error) {
     console.error('Error fetching all categories spending:', error);
-    throw error;
+    return [];
   }
 };
 
+export const getAllEstablishments = async (): Promise<Establishment[]> => {
+  try {
+    const result = await db.getAllAsync<Establishment>(`
+      SELECT 
+        e.id,
+        e.name,
+        e.location,
+        COALESCE(SUM(p.quantity * p.unit_price), 0) as total_spent,
+        COUNT(DISTINCT sb.id) as purchase_count
+      FROM Establishment e
+      LEFT JOIN SmartBill sb ON sb.establishment_id = e.id
+      LEFT JOIN Product p ON p.bill_id = sb.id
+      GROUP BY e.id, e.name, e.location
+      HAVING total_spent > 0
+      ORDER BY total_spent DESC
+    `);
+    
+    return result || [];
+  } catch (error) {
+    console.error('Error fetching all establishments:', error);
+    return [];
+  }
+};
 
+export const getAllSmartBills = async (): Promise<SmartBill[]> => {
+  try {
+    const result = await db.getAllAsync<SmartBill>(`
+      SELECT 
+        sb.id,
+        sb.purchase_date,
+        sb.purchase_time,
+        e.name as establishment_name,
+        e.location as establishment_location,
+        COALESCE(SUM(p.quantity * p.unit_price), 0) as total_amount,
+        COUNT(DISTINCT p.id) as product_count
+      FROM SmartBill sb
+      JOIN Establishment e ON sb.establishment_id = e.id
+      LEFT JOIN Product p ON p.bill_id = sb.id
+      GROUP BY sb.id, sb.purchase_date, sb.purchase_time, e.name, e.location
+      ORDER BY sb.purchase_date DESC, sb.purchase_time DESC
+    `);
+    
+    return result || [];
+  } catch (error) {
+    console.error('Error fetching all smartbills:', error);
+    return [];
+  }
+};
