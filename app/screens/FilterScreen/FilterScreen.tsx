@@ -9,7 +9,14 @@ import {
   ProductResult,
 } from "@/services/database/queries";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, TextInput, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import styles from "./styleFilterScreen";
 
 const ITEMS_PER_PAGE = 5;
@@ -27,8 +34,21 @@ const FilterScreen = () => {
   const [categorySpending, setCategorySpending] = useState<CategorySpending[]>(
     []
   );
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedOption, setSelectedOption] = useState("Produtos");
 
-  // Fetch initial data
+  const dropdownOptions = [
+    { id: "products", label: "Produtos" },
+    { id: "categories", label: "Categorias" },
+    { id: "establishments", label: "Estabelecimentos" },
+    { id: "smartbills", label: "Smartbills" },
+  ];
+
+  const handleSelectOption = (option: string) => {
+    setSelectedOption(option);
+    setShowDropdown(false);
+  };
+
   const fetchInitialData = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -51,7 +71,6 @@ const FilterScreen = () => {
     }
   }, []);
 
-  // Filter products based on search query
   useEffect(() => {
     if (searchQuery.trim() === "") {
       setFilteredProducts(products);
@@ -136,7 +155,32 @@ const FilterScreen = () => {
 
   return (
     <View style={styles.container}>
-      <TopText first="Produtos na minha" second="SmartBill" />
+      <View style={styles.headerContainer}>
+        <View style={styles.dropdownContainer}>
+          <TopText
+            first={selectedOption}
+            second="na minha"
+            third="Smart Bill"
+            clickable={true}
+            onFirstPress={() => setShowDropdown(!showDropdown)}
+          />
+
+          {showDropdown && (
+            <View style={styles.dropdown}>
+              {dropdownOptions.map((option) => (
+                <Pressable
+                  key={option.id}
+                  style={styles.dropdownItem}
+                  onPress={() => handleSelectOption(option.label)}
+                >
+                  <Text style={styles.dropdownItemText}>{option.label}</Text>
+                </Pressable>
+              ))}
+            </View>
+          )}
+        </View>
+      </View>
+
       <View style={styles.chartContainer}>
         <DonutGraph
           totalSpent={totalSpent}
@@ -144,6 +188,7 @@ const FilterScreen = () => {
           size={250}
         />
       </View>
+
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}

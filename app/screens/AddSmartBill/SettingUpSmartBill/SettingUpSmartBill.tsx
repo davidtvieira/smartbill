@@ -100,7 +100,7 @@ export default function SettingUpSmartBill() {
 
   return (
     <View style={{ gap: 20, padding: 20, justifyContent: "center", flex: 1 }}>
-      <TopText first="configurar" second="Smart Bill" />
+      <TopText first="configurar" third="Smart Bill" />
 
       {!editedData && <ImagePreview imageUri={imageUri} loading={loading} />}
 

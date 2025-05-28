@@ -42,14 +42,15 @@ export const getAllProducts = async (limit?: number, offset: number = 0): Promis
       ${limitClause}
     `);
     
-    // Return an empty array if no results
     return result || [];
   } catch (error) {
     console.error('Error fetching all products:', error);
-    // Return empty array on error
+
     return [];
   }
 };
+
+
 
 export const getCurrentMonthTotalSpent = async (): Promise<number> => {
   try {
@@ -97,3 +98,26 @@ export const getCurrentMonthCategorySpending = async (): Promise<CategorySpendin
     throw error;
   }
 };
+
+export const getAllCategoriesSpending = async (): Promise<CategorySpending[]> => {
+  try {
+    const result = await db.getAllAsync<CategorySpending>(`
+      SELECT 
+        c.name as category_name,
+        COALESCE(SUM(p.quantity * p.unit_price), 0) as total_spent
+      FROM Category c
+      LEFT JOIN Product p ON p.category_id = c.id
+      LEFT JOIN SmartBill sb ON p.bill_id = sb.id
+      GROUP BY c.id, c.name
+      HAVING total_spent > 0
+      ORDER BY total_spent DESC
+    `);
+    
+    return result;
+  } catch (error) {
+    console.error('Error fetching all categories spending:', error);
+    throw error;
+  }
+};
+
+

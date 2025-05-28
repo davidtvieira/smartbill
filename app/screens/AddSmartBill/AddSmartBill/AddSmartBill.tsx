@@ -15,9 +15,10 @@ export default function ImagePicker() {
       style={{
         gap: 20,
         justifyContent: "center",
+        flex: 1,
       }}
     >
-      <TopText first="adicionar nova" second="Smart Bill" />
+      <TopText first="adicionar nova" third="Smart Bill" />
       <ImagePickerMenu onImagePicked={handleImagePick} />
       <Button
         title="Voltar"

@@ -65,7 +65,7 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <TopText first="A minha" second="Smart Bill" />
+      <TopText first="A minha" third="Smart Bill" />
       <DonutGraph
         totalSpent={totalSpent}
         content={categorySpending}
