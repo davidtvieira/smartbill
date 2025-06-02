@@ -35,7 +35,7 @@ export default function Index() {
             screenOptions={{
               headerShown: false,
               contentStyle: {
-                padding: 10,
+                padding: 20,
                 backgroundColor: backgroundColor,
                 flex: 1,
                 justifyContent: "center",

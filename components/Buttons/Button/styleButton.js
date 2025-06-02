@@ -24,7 +24,7 @@ export default StyleSheet.create({
     opacity: 0.5
   },
 
-  clear: {
+  onlyText: {
     backgroundColor: "transparent",
   }
 });

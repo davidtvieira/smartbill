@@ -37,7 +37,6 @@ export default function TopText({
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "center",
-          gap: 10,
         }}
       >
         <TouchableOpacity onPress={onFirstPress} disabled={!clickable}>

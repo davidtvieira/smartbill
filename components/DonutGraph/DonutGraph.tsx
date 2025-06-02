@@ -17,7 +17,7 @@ const DonutGraph = ({ totalSpent, size, content }: DonutGraphProps) => {
     baseColor: string = "#F47A64"
   ): string => {
     const hex = baseColor.replace("#", "");
-    const factor = 1 - index * 0.09;
+    const factor = 1 - index * 0.035;
 
     const r = parseInt(hex.substring(0, 2), 16);
     const g = parseInt(hex.substring(2, 4), 16);
