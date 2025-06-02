@@ -13,18 +13,19 @@ export default function ImagePicker() {
   return (
     <View
       style={{
-        gap: 20,
         justifyContent: "center",
         flex: 1,
       }}
     >
       <TopText first="adicionar nova" third="Smart Bill" />
       <ImagePickerMenu onImagePicked={handleImagePick} />
-      <Button
-        title="Voltar"
-        onPress={() => navigation.goBack()}
-        variant="secondary"
-      />
+      <View style={{ paddingTop: 20 }}>
+        <Button
+          title="Voltar"
+          onPress={() => navigation.goBack()}
+          variant="secondary"
+        />
+      </View>
     </View>
   );
 }

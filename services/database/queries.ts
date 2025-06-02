@@ -23,6 +23,25 @@ export interface CategoryWithSpending extends Category {
   item_count: number;
 }
 
+export interface Establishment {
+  id: number;
+  name: string;
+  location: string;
+  total_spent: number;
+  bill_count: number;
+  last_visit: string;
+}
+
+export interface SmartBill {
+  id: number;
+  purchase_date: string;
+  purchase_time: string;
+  establishment_name: string;
+  establishment_location: string;
+  total_amount: number;
+  item_count: number;
+}
+
 export const getAllProducts = async (): Promise<Product[]> => {
   try {
     const result = await db.getAllAsync<Product>(`
@@ -70,6 +89,55 @@ export const getAllCategories = async (): Promise<CategoryWithSpending[]> => {
     return result || [];
   } catch (error) {
     console.error('Error fetching categories with spending:', error);
+    return [];
+  }
+};
+
+export const getAllEstablishments = async (): Promise<Establishment[]> => {
+  try {
+    const result = await db.getAllAsync<Establishment>(`
+      SELECT 
+        e.id,
+        e.name,
+        e.location,
+        COALESCE(SUM(p.quantity * p.unit_price), 0) as total_spent,
+        COUNT(DISTINCT sb.id) as bill_count,
+        MAX(sb.purchase_date || ' ' || sb.purchase_time) as last_visit
+      FROM Establishment e
+      LEFT JOIN SmartBill sb ON e.id = sb.establishment_id
+      LEFT JOIN Product p ON sb.id = p.bill_id
+      GROUP BY e.id, e.name, e.location
+      ORDER BY last_visit DESC, e.name ASC
+    `);
+    
+    return result || [];
+  } catch (error) {
+    console.error('Error fetching establishments:', error);
+    return [];
+  }
+};
+
+export const getAllSmartBills = async (): Promise<SmartBill[]> => {
+  try {
+    const result = await db.getAllAsync<SmartBill>(`
+      SELECT 
+        sb.id,
+        sb.purchase_date,
+        sb.purchase_time,
+        e.name as establishment_name,
+        e.location as establishment_location,
+        COALESCE(SUM(p.quantity * p.unit_price), 0) as total_amount,
+        COUNT(DISTINCT p.id) as item_count
+      FROM SmartBill sb
+      JOIN Establishment e ON sb.establishment_id = e.id
+      LEFT JOIN Product p ON sb.id = p.bill_id
+      GROUP BY sb.id, sb.purchase_date, sb.purchase_time, e.name, e.location
+      ORDER BY sb.purchase_date DESC, sb.purchase_time DESC
+    `);
+    
+    return result || [];
+  } catch (error) {
+    console.error('Error fetching smart bills:', error);
     return [];
   }
 };

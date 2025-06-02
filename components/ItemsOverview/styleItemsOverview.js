@@ -3,6 +3,7 @@ import { StyleSheet } from "react-native";
 export default StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "center",
   },
   rowButtons: {
     flexDirection: "row",
@@ -12,10 +13,8 @@ export default StyleSheet.create({
   },
   listContainer: {
     flex: 1,
-    maxHeight: "80%",
   },
   listContent: {
     gap: 12,
   },
-
 });

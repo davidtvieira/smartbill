@@ -34,12 +34,12 @@ export default function Index() {
           <Stack.Navigator
             screenOptions={{
               headerShown: false,
+              navigationBarColor: backgroundColor,
               contentStyle: {
-                padding: 20,
+                padding: 10,
                 backgroundColor: backgroundColor,
                 flex: 1,
                 justifyContent: "center",
-                width: "100%",
               },
             }}
           >

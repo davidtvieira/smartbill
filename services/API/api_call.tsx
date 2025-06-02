@@ -24,14 +24,16 @@ const prompt = `
     }
     
     Completa nomes incompletos (ex: "Lisbo" -> "Lisboa"). 
+    Se existirem mais que 1 produto com o mesmo nome exatamente, adiciona apenas um produto mas com a quantidade total de todos os produtos com o mesmo nome.
     Não uses caracteres inválidos como "/" ou "|". 
+    Na informação geral, se um campo não estiver disponivel não adiciones nada, apenas deixa vazio.
     No campo "local", apenas a cidade, não incluas moradas ou números de porta.
     No nome dos produtos, apenas inclui o nome do produto, sem quantidades no nome, a quantidade tem o seu campo próprio.
     O preço de cada produto, normalmente, está do lado direito do talão. Inclui sempre o preço do lado direito do talão, mesmo que este esteja por debaixo do nome.
     Primeiro deves definir a subcategoria e depois a categoria respectiva a essa subcategoria.
     As categorias e subcategorias devem ser uma das pré definidas:
     categorias: 
-      Comida, Bebida, Higiene, Casa, Animais e Farmácia. 
+      Comida, Bebida, Higiene, Casa, Animais, Farmácia, Papelaria e Vestuario. 
 
     subcategorias: 
       Comida:
@@ -64,7 +66,10 @@ const prompt = `
         Medicamentos e Tratamentos
         Suplementos e Vitaminas
         Equipamentos Médicos e Primeiros Socorros
-
+      Papelaria:
+        Papelaria
+      Vestuario:
+        Vestuario
 
       Quando achares que o produto não se encaixa em nenhuma dessas subcategorias atribui aquela que achas mais proxima da verdadeira, nunca deixes nenhum campo vazio.
 

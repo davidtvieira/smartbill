@@ -1,6 +1,8 @@
 import Button from "@/components/Buttons/Button/Button";
 import DonutGraph from "@/components/DonutGraph/DonutGraph";
+import SearchInput from "@/components/SearchInput/SearchInput";
 import { useNavigation } from "expo-router";
+import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import styles from "./styleItemsOverview";
 
@@ -19,6 +21,7 @@ type ItemsOverviewProps<T extends BaseItem> = {
   items: T[];
   onItemPress: (item: T) => void;
   showButtons?: boolean;
+  showSearch?: boolean;
   title?: string;
   showGraph?: boolean;
   getItemValue?: (item: T) => number;
@@ -37,13 +40,21 @@ const ItemsOverview = <T extends BaseItem>({
   items,
   onItemPress,
   showButtons = true,
+  showSearch = false,
   showGraph = true,
   getItemValue = defaultGetItemValue,
   renderItemContent = defaultRenderItemContent,
 }: ItemsOverviewProps<T>) => {
   const navigation = useNavigation() as any;
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const itemSpending = items.reduce<ItemSpending[]>((acc, item) => {
+  const filteredItems = showSearch
+    ? items.filter((item) =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : items;
+
+  const itemSpending = filteredItems.reduce<ItemSpending[]>((acc, item) => {
     const itemTotal =
       "total_spent" in item
         ? item.total_spent
@@ -80,7 +91,7 @@ const ItemsOverview = <T extends BaseItem>({
 
       <View style={styles.listContainer}>
         {showButtons && (
-          <>
+          <View>
             <Button
               title="Smart Bill"
               onPress={() => navigation.navigate("AddSmartBill" as never)}
@@ -103,23 +114,46 @@ const ItemsOverview = <T extends BaseItem>({
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "space-between",
+                width: "100%",
               }}
             >
-              <Text
-                style={{ fontSize: 20, fontWeight: "bold", color: "white" }}
-              >
-                Categorias
-              </Text>
-              <Button
-                title="Ver Todos"
-                onPress={() => navigation.navigate("FilterScreen" as never)}
-                variant="onlyText"
-              />
+              {filteredItems.length > 0 && (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    width: "100%",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      fontWeight: "bold",
+                      color: "white",
+                    }}
+                  >
+                    Este Mês
+                  </Text>
+                  <Button
+                    title="Ver Todos"
+                    onPress={() => navigation.navigate("FilterScreen" as never)}
+                    variant="onlyText"
+                  />
+                </View>
+              )}
             </View>
-          </>
+          </View>
         )}
+        {showSearch && (
+          <SearchInput
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="Pesquisar..."
+          />
+        )}
+
         <ScrollView contentContainerStyle={styles.listContent}>
-          {items.map((item) => (
+          {filteredItems.map((item) => (
             <View key={item.id.toString()}>
               <Button
                 title={renderItemContent(item) as string}

@@ -12,14 +12,14 @@ interface TopTextProps {
   second?: string;
   third?: string;
   clickable?: boolean;
-  onFirstPress?: () => void;
+  onClick?: () => void;
 }
 
 export default function TopText({
   first,
   second,
   clickable = false,
-  onFirstPress,
+  onClick,
 }: TopTextProps) {
   const firstTextStyle: StyleProp<TextStyle> = [
     styles.first,
@@ -30,6 +30,7 @@ export default function TopText({
     <View
       style={{
         flexDirection: "column",
+        paddingVertical: 20,
       }}
     >
       <View
@@ -39,7 +40,7 @@ export default function TopText({
           justifyContent: "center",
         }}
       >
-        <TouchableOpacity onPress={onFirstPress} disabled={!clickable}>
+        <TouchableOpacity onPress={onClick} disabled={!clickable}>
           {first && <Text style={firstTextStyle}>{first}</Text>}
         </TouchableOpacity>
         {second && <Text style={styles.second}>{second}</Text>}

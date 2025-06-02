@@ -7,7 +7,7 @@ import { Api_Call } from "@/services/API/api_call";
 import { insertSmartBill } from "@/services/database/insert";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useState } from "react";
-import { ScrollView, View } from "react-native";
+import { Alert, ScrollView, View } from "react-native";
 
 export type SmartBillData = {
   local: string;
@@ -36,6 +36,23 @@ export default function SettingUpSmartBill() {
 
   const handleSaveSmartBill = async () => {
     if (!editedData) return;
+
+    // Check if all required fields are filled
+    const requiredFields: (keyof SmartBillData)[] = [
+      "local",
+      "establishment",
+      "date",
+      "time",
+    ];
+    const missingFields = requiredFields.filter((field) => !editedData[field]);
+
+    if (missingFields.length > 0) {
+      Alert.alert(
+        "Erro ao adicionar Smart Bill",
+        "Por favor, preencha todos os campos obrigatórios"
+      );
+      return;
+    }
 
     try {
       await insertSmartBill(editedData);
