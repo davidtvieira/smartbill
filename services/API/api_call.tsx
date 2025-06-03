@@ -1,6 +1,32 @@
-import Constants from "expo-constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const apiKey = Constants.expoConfig?.extra?.apiKey; //@.env
+type AIModel = "gemini-1.5-flash" | "gemini-1.5-pro";
+
+const DEFAULT_MODEL_URL =
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+
+async function getApiKey(): Promise<string> {
+  try {
+    const apiKey = await AsyncStorage.getItem("geminiApiKey");
+    if (!apiKey) {
+      throw new Error("Chave da API nao introduzida.");
+    }
+    return apiKey;
+  } catch (error) {
+    console.error("Erro ao obter a chave da API:", error);
+    throw new Error("Erro ao obter a chave da API");
+  }
+}
+
+async function getModelEndpoint(): Promise<string> {
+  try {
+    const savedEndpoint = await AsyncStorage.getItem("aiModelEndpoint");
+    return savedEndpoint || DEFAULT_MODEL_URL;
+  } catch (error) {
+    console.error("Erro ao obter o endpoint do modelo:", error);
+    return DEFAULT_MODEL_URL;
+  }
+}
 
 const prompt = `
     Extrai da imagem o conteúdo do recibo em formato JSON.
@@ -89,54 +115,61 @@ export async function Api_Call(imageUri: string): Promise<{
     sub_category: string;
   }[];
 }> {
-  const response = await fetch(imageUri);
-  const blob = await response.blob();
+  try {
+    const [apiKey, modelEndpoint] = await Promise.all([
+      getApiKey(),
+      getModelEndpoint(),
+    ]);
 
-  const base64data = await new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
-  });
+    const response = await fetch(imageUri);
+    const blob = await response.blob();
 
-  const base64Image = base64data.split(",")[1];
+    const base64data = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
 
-  const payload = {
-    contents: [
-      {
-        parts: [
-          { text: prompt },
-          {
-            inlineData: {
-              mimeType: blob.type || "image/jpeg",
-              data: base64Image,
+    const base64Image = base64data.split(",")[1];
+
+    const payload = {
+      contents: [
+        {
+          parts: [
+            { text: prompt },
+            {
+              inlineData: {
+                mimeType: blob.type || "image/jpeg",
+                data: base64Image,
+              },
             },
-          },
-        ],
-      },
-    ],
-  };
+          ],
+        },
+      ],
+    };
 
-  const geminiResponse = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-    {
+    const geminiResponse = await fetch(`${modelEndpoint}?key=${apiKey}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
+    });
+
+    const result = await geminiResponse.json();
+
+    if (
+      !geminiResponse.ok ||
+      !result.candidates?.[0]?.content?.parts?.[0]?.text
+    ) {
+      throw new Error(result.error?.message || "Failed to process image");
     }
-  );
 
-  const result = await geminiResponse.json();
-
-  if (
-    !geminiResponse.ok ||
-    !result.candidates?.[0]?.content?.parts?.[0]?.text
-  ) {
-    throw new Error(result.error?.message || "Failed to process image");
+    const extractedText = result.candidates[0].content.parts[0].text;
+    return JSON.parse(extractedText);
+  } catch (error) {
+    console.error("Error in Api_Call:", error);
+    throw error;
   }
-
-  const extractedText = result.candidates[0].content.parts[0].text;
-  return JSON.parse(extractedText);
 }

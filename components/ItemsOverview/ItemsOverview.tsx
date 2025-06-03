@@ -24,17 +24,10 @@ type ItemsOverviewProps<T extends BaseItem> = {
   showSearch?: boolean;
   title?: string;
   showGraph?: boolean;
-  getItemValue?: (item: T) => number;
   renderItemContent?: (item: T) => React.ReactNode;
 };
 
-const defaultGetItemValue = (item: any) => {
-  return item.unit_price * (item.quantity || 1);
-};
-
-const defaultRenderItemContent = (item: any) => (
-  <Text>{`${item.name} - €${defaultGetItemValue(item).toFixed(2)}`}</Text>
-);
+const defaultRenderItemContent = (item: any) => <Text>{`${item.name}`}</Text>;
 
 const ItemsOverview = <T extends BaseItem>({
   items,
@@ -42,7 +35,6 @@ const ItemsOverview = <T extends BaseItem>({
   showButtons = true,
   showSearch = false,
   showGraph = true,
-  getItemValue = defaultGetItemValue,
   renderItemContent = defaultRenderItemContent,
 }: ItemsOverviewProps<T>) => {
   const navigation = useNavigation() as any;

@@ -1,13 +1,16 @@
+import Button from "@/components/Buttons/Button/Button";
 import ItemsOverview from "@/components/ItemsOverview/ItemsOverview";
 import TopText from "@/components/TopText/TopText";
 import {
   CategoryWithSpending,
   getAllCategories,
 } from "@/services/database/queries";
+import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import styles from "./styleHomeScreen";
 const HomeScreen = () => {
+  const navigation = useNavigation();
   const [categories, setCategories] = useState<CategoryWithSpending[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,6 +38,13 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
+      <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+        <Button
+          title={"Definições"}
+          onPress={() => navigation.navigate("SettingsScreen" as never)}
+          variant="onlyText"
+        />
+      </View>
       <TopText first="A minha" third="Smart Bill" />
       <ItemsOverview
         items={categories.map((category) => ({

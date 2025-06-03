@@ -10,6 +10,7 @@ import AddSmartBill from "./screens/AddSmartBill/AddSmartBill/AddSmartBill";
 import SettingUpSmartBill from "./screens/AddSmartBill/SettingUpSmartBill/SettingUpSmartBill";
 import FilterScreen from "./screens/FilterScreen/FilterScreen";
 import HomeScreen from "./screens/HomeScreen/HomeScreen";
+import SettingsScreen from "./screens/SettingsScreen/SettingsScreen";
 
 const Stack = createNativeStackNavigator();
 const backgroundColor = "#273C47";
@@ -50,6 +51,7 @@ export default function Index() {
               component={SettingUpSmartBill}
             />
             <Stack.Screen name="FilterScreen" component={FilterScreen} />
+            <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </NavigationIndependentTree>

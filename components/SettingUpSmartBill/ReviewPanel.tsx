@@ -1,6 +1,6 @@
 import { SmartBillData } from "@/app/screens/AddSmartBill/SettingUpSmartBill/SettingUpSmartBill";
 import Button from "@/components/Buttons/Button/Button";
-import DataButton from "@/components/Buttons/DataButton/DataButton";
+import DataButton from "@/components/Buttons/Button/DataButton/DataButton";
 import React from "react";
 import { Text, View } from "react-native";
 
