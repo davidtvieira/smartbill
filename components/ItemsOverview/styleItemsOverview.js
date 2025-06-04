@@ -15,6 +15,15 @@ export default StyleSheet.create({
     flex: 1,
   },
   listContent: {
-    gap: 12,
+    gap: 1,
   },
+  itemContainer: {
+    padding: 16,
+    backgroundColor: "#F4F4F4F4",
+    borderRadius: 15,
+    marginBottom: 16,
+  },
+  itemButton: {
+    width: "100%",
+  },    
 });

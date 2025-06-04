@@ -30,7 +30,6 @@ export default function TopText({
     <View
       style={{
         flexDirection: "column",
-        paddingVertical: 20,
       }}
     >
       <View

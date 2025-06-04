@@ -6,14 +6,18 @@ export default StyleSheet.create({
     fontSize: 25,
     color: "#F47A64",
     fontWeight: "bold",
-
   },
   second: {
     textAlign: "center",
     fontSize: 25,
     color: "#FFFFFF",
     fontWeight: "bold",
-
+  },
+  third: {
+    textAlign: "center",
+    fontSize: 25,
+    color: "#FFFFFF",
+    fontWeight: "bold",
   },
   underline: {
     textDecorationLine: "underline",

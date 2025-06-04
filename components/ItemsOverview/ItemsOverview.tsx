@@ -4,11 +4,16 @@ import SearchInput from "@/components/SearchInput/SearchInput";
 import { useNavigation } from "expo-router";
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
+import ItemButton from "../Buttons/ItemButton/ItemButton";
 import styles from "./styleItemsOverview";
 
 type BaseItem = {
   id: string | number;
   name: string;
+  total_spent: number;
+  category_name?: string;
+  quantity?: number;
+  unit_price?: number;
   [key: string]: any;
 };
 
@@ -24,10 +29,10 @@ type ItemsOverviewProps<T extends BaseItem> = {
   showSearch?: boolean;
   title?: string;
   showGraph?: boolean;
-  renderItemContent?: (item: T) => React.ReactNode;
+  renderTitle?: (item: T) => string;
+  renderSubtitle?: (item: T) => string | undefined;
+  renderValue?: (item: T) => string;
 };
-
-const defaultRenderItemContent = (item: any) => <Text>{`${item.name}`}</Text>;
 
 const ItemsOverview = <T extends BaseItem>({
   items,
@@ -35,7 +40,9 @@ const ItemsOverview = <T extends BaseItem>({
   showButtons = true,
   showSearch = false,
   showGraph = true,
-  renderItemContent = defaultRenderItemContent,
+  renderTitle = (item) => item.name,
+  renderSubtitle = (item) => item.category_name,
+  renderValue = (item) => `${item.total_spent.toFixed(2)}€`,
 }: ItemsOverviewProps<T>) => {
   const navigation = useNavigation() as any;
   const [searchQuery, setSearchQuery] = useState("");
@@ -47,12 +54,7 @@ const ItemsOverview = <T extends BaseItem>({
     : items;
 
   const itemSpending = filteredItems.reduce<ItemSpending[]>((acc, item) => {
-    const itemTotal =
-      "total_spent" in item
-        ? item.total_spent
-        : "value" in item
-        ? item.value
-        : 0;
+    const itemTotal = "total_spent" in item ? item.total_spent : 0;
     const existingItem = acc.find((i) => i.name === item.name);
 
     if (existingItem) {
@@ -147,10 +149,11 @@ const ItemsOverview = <T extends BaseItem>({
         <ScrollView contentContainerStyle={styles.listContent}>
           {filteredItems.map((item) => (
             <View key={item.id.toString()}>
-              <Button
-                title={renderItemContent(item) as string}
+              <ItemButton
+                title={renderTitle(item)}
+                value={renderValue(item)}
+                subtitle={renderSubtitle(item)}
                 onPress={() => onItemPress(item)}
-                variant="secondary"
               />
             </View>
           ))}

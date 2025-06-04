@@ -9,7 +9,8 @@ import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import styles from "./styleHomeScreen";
-const HomeScreen = () => {
+
+export default function HomeScreen() {
   const navigation = useNavigation();
   const [categories, setCategories] = useState<CategoryWithSpending[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -45,20 +46,23 @@ const HomeScreen = () => {
           variant="onlyText"
         />
       </View>
-      <TopText first="A minha" third="Smart Bill" />
+      <View>
+        <TopText first="A minha" third="Smart Bill" />
+      </View>
       <ItemsOverview
-        items={categories.map((category) => ({
-          id: category.id,
-          name: category.name,
-          total_spent: category.total_spent || 0,
-        }))}
+        items={categories}
         showButtons={true}
         showGraph={true}
         onItemPress={(category) => console.log("Category pressed:", category)}
-        renderItemContent={(item) => `${item.name} - ${item.total_spent}€`}
+        showSearch={false}
+        renderSubtitle={(item) =>
+          item.subcategory_count
+            ? `${item.subcategory_count} subcategoria${
+                item.subcategory_count !== 1 ? "s" : ""
+              }`
+            : "Sem subcategorias"
+        }
       />
     </View>
   );
-};
-
-export default HomeScreen;
+}
