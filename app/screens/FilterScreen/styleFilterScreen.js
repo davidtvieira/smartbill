@@ -48,4 +48,43 @@ export default StyleSheet.create({
     color: '#666',
     marginHorizontal: 4,
   },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    width: "90%",
+    maxHeight: "80%",
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  closeButton: {
+    backgroundColor: "#007AFF",
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 20,
+    alignSelf: "center",
+  },
+  closeButtonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: "bold",
+  },
 });

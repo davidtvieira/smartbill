@@ -1,16 +1,22 @@
 import ItemsOverview from "@/components/ItemsOverview/ItemsOverview";
+import ItemDetailsModal from "@/components/Modals/ItemDetailsModal/ItemDetailsModal";
 import TopText from "@/components/TopText/TopText";
 import {
-  getAllCategories,
-  getAllEstablishments,
-  getAllProducts,
-  getAllSmartBills,
+  getMonthlyCategories,
+  getMonthlyEstablishments,
+  getMonthlyProducts,
+  getMonthlySmartBills,
+  getSmartBillsByEstablishment,
 } from "@/services/database/queries";
 import { useEffect, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import styles from "./styleFilterScreen";
 
-type DataType = "products" | "establishments" | "smartbills" | "categories";
+export type DataType =
+  | "products"
+  | "establishments"
+  | "smartbills"
+  | "categories";
 
 interface BaseItem {
   id: number;
@@ -20,10 +26,14 @@ interface BaseItem {
 
 export default function FilterScreen() {
   const [data, setData] = useState<Array<BaseItem & Record<string, any>>>([]);
-
   const [error, setError] = useState<string | null>(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedOption, setSelectedOption] = useState<DataType>("products");
+  const [selectedEstablishment, setSelectedEstablishment] = useState<
+    number | null
+  >(null);
+  const [selectedItem, setSelectedItem] = useState<any | null>(null);
+  const [showItemModal, setShowItemModal] = useState(false);
 
   const options = [
     { label: "Produtos", value: "products" as const },
@@ -32,66 +42,61 @@ export default function FilterScreen() {
     { label: "Smartbills", value: "smartbills" as const },
   ];
 
+  type DataMapper<T> = {
+    fetchFn: () => Promise<T[]>;
+    totalSpent: (item: T) => number;
+    name: (item: T) => string;
+    id: (item: T) => string | number;
+    renderSubtitle?: (item: T) => string;
+  };
+
+  const dataMappers: Record<DataType, DataMapper<any>> = {
+    products: {
+      fetchFn: getMonthlyProducts,
+      totalSpent: (p) => p.unit_price * (p.quantity || 1),
+      name: (p) => p.name,
+      id: (p) => p.id,
+    },
+    categories: {
+      fetchFn: getMonthlyCategories,
+      totalSpent: (c) => c.total_spent || 0,
+      name: (c) => c.name,
+      id: (c) => c.id,
+    },
+    establishments: {
+      fetchFn: getMonthlyEstablishments,
+      totalSpent: (e) => e.total_spent || 0,
+      name: (e) => e.name,
+      id: (e) => e.id,
+      renderSubtitle: (e) => `Última visita: ${e.last_visit}`,
+    },
+    smartbills: {
+      fetchFn: async () => {
+        if (selectedEstablishment) {
+          return getSmartBillsByEstablishment(selectedEstablishment);
+        }
+        return getMonthlySmartBills();
+      },
+      totalSpent: (sb) => sb.amount || 0,
+      name: (sb) => sb.establishment_name,
+      id: (sb) => sb.id,
+    },
+  };
+
   const fetchData = async (type: DataType) => {
     try {
       setError(null);
+      const { fetchFn, totalSpent, name, id } = dataMappers[type];
+      const items = await fetchFn();
 
-      switch (type) {
-        case "products": {
-          const products = await getAllProducts();
-          setData(
-            products.map((p) => ({
-              ...p,
-              total_spent: p.unit_price * (p.quantity || 1),
-              name: p.name,
-              id: p.id,
-            }))
-          );
-          break;
-        }
-
-        case "categories": {
-          const categories = await getAllCategories();
-          setData(
-            categories.map((c) => ({
-              ...c,
-              total_spent: c.total_spent || 0,
-              name: c.name,
-              id: c.id,
-            }))
-          );
-          break;
-        }
-
-        case "establishments": {
-          const establishments = await getAllEstablishments();
-          setData(
-            establishments.map((e) => ({
-              ...e,
-              total_spent: e.total_spent || 0,
-              name: e.name,
-              id: e.id,
-
-              bill_count: e.bill_count,
-              last_visit: e.last_visit,
-            }))
-          );
-          break;
-        }
-
-        case "smartbills": {
-          const smartbills = await getAllSmartBills();
-          setData(
-            smartbills.map((sb) => ({
-              ...sb,
-              total_spent: sb.total_amount || 0,
-              name: `${sb.establishment_name} `,
-              id: sb.id,
-            }))
-          );
-          break;
-        }
-      }
+      setData(
+        items.map((item) => ({
+          ...item,
+          total_spent: totalSpent(item),
+          name: name(item),
+          id: id(item),
+        }))
+      );
     } catch (err) {
       console.error(`Failed to fetch ${type}:`, err);
       setError(`Failed to load ${type}`);
@@ -99,14 +104,25 @@ export default function FilterScreen() {
     }
   };
 
-  useEffect(() => {
-    fetchData(selectedOption);
-  }, [selectedOption]);
+  const handleItemPress = async (item: any) => {
+    if (selectedOption === "products" || selectedOption === "smartbills") {
+      setSelectedItem(item);
+      setShowItemModal(true);
+    } else if (selectedOption === "establishments") {
+      setSelectedEstablishment(item.id);
+      setSelectedOption("smartbills");
+    }
+  };
 
   const handleOptionSelect = (option: DataType) => {
     setSelectedOption(option);
+    setSelectedEstablishment(null);
     setShowDropdown(false);
   };
+
+  useEffect(() => {
+    fetchData(selectedOption);
+  }, [selectedOption, selectedEstablishment]);
 
   if (error) {
     return (
@@ -148,42 +164,22 @@ export default function FilterScreen() {
         <View style={{ flex: 1, marginTop: 16 }}>
           <ItemsOverview
             items={data}
-            onItemPress={(item) => {
-              // Handle item press
-              console.log("Item pressed:", item);
-            }}
+            onItemPress={handleItemPress}
             showSearch={true}
             showButtons={false}
-            renderTitle={(item) => {
-              switch (selectedOption) {
-                case "smartbills":
-                  return item.establishment_name || item.name;
-                default:
-                  return item.name;
-              }
-            }}
-            renderSubtitle={(item) => {
-              switch (selectedOption) {
-                case "products":
-                  return item.category_name || "";
-                case "categories":
-                  return item.subcategory_count
-                    ? `${item.subcategory_count} subcategorias`
-                    : "Sem subcategorias";
-                case "establishments":
-                  return item.bill_count ? `${item.bill_count} smartbill` : "";
-                case "smartbills":
-                  return item.purchase_date && item.item_count
-                    ? `${item.purchase_date} | ${item.item_count} produtos`
-                    : "";
-                default:
-                  return "";
-              }
-            }}
-            renderValue={(item) => `€${item.total_spent.toFixed(2)}`}
+            dataType={selectedOption}
           />
         </View>
       </View>
+      <ItemDetailsModal
+        visible={showItemModal}
+        selectedItem={selectedItem}
+        selectedOption={selectedOption}
+        onClose={() => {
+          setShowItemModal(false);
+          setSelectedItem(null);
+        }}
+      />
     </View>
   );
 }

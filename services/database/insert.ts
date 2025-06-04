@@ -18,8 +18,8 @@ type ExtractedSmartBill = {
 
 const getOrCreateEstablishment = async (name: string, location: string) => {
   const result = await db.getFirstAsync<{ id: number }>(
-    `SELECT id FROM Establishment WHERE name = ? AND location = ?`,
-    [name, location]
+    `SELECT id FROM Establishment WHERE name = ?`,
+    [name]
   );
 
   if (result) return result.id;
@@ -73,10 +73,15 @@ export const insertSmartBill = async (data: ExtractedSmartBill) => {
       data.local
     );
 
+    // Convert date to ISO format (YYYY-MM-DD)
+    const [day, month] = data.date.split('-');
+    const currentYear = new Date().getFullYear();
+    const isoDate = `${currentYear}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+
     const billInsert = await db.runAsync(
       `INSERT INTO SmartBill (purchase_date, purchase_time, establishment_id)
        VALUES (?, ?, ?)`,
-      [data.date, data.time, establishmentId]
+      [isoDate, data.time, establishmentId]
     );
 
     const billId = billInsert.lastInsertRowId;

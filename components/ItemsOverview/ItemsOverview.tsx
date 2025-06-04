@@ -1,11 +1,23 @@
 import Button from "@/components/Buttons/Button/Button";
 import DonutGraph from "@/components/DonutGraph/DonutGraph";
 import SearchInput from "@/components/SearchInput/SearchInput";
+import {
+  getAllCategories,
+  getAllEstablishments,
+  getAllProducts,
+  getAllSmartBills,
+} from "@/services/database/queries";
 import { useNavigation } from "expo-router";
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import ItemButton from "../Buttons/ItemButton/ItemButton";
 import styles from "./styleItemsOverview";
+
+const MAX_ITEM_NAME_LENGTH = 25;
+const truncateString = (str: string, maxLength: number) => {
+  if (str.length <= maxLength) return str;
+  return `${str.substring(0, maxLength - 3)}...`;
+};
 
 type BaseItem = {
   id: string | number;
@@ -22,6 +34,52 @@ type ItemSpending = {
   total: number;
 };
 
+type DataType = "products" | "establishments" | "smartbills" | "categories";
+
+type DataMapper<T> = {
+  fetchFn: () => Promise<T[]>;
+  totalSpent: (item: T) => number;
+  name: (item: T) => string;
+  id: (item: T) => string | number;
+  renderSubtitle?: (item: T) => string;
+};
+
+const dataMappers: Record<DataType, DataMapper<any>> = {
+  products: {
+    fetchFn: getAllProducts,
+    totalSpent: (p) => p.unit_price * (p.quantity || 1),
+    name: (p) => p.name,
+    id: (p) => p.id,
+    renderSubtitle: (p) => `${p.category_name}`,
+  },
+  categories: {
+    fetchFn: getAllCategories,
+    totalSpent: (c) => c.total_spent || 0,
+    name: (c) => c.name,
+    id: (c) => c.id,
+    renderSubtitle: (c) =>
+      c.subcategory_count
+        ? `${c.subcategory_count} subcategoria${
+            c.subcategory_count !== 1 ? "s" : ""
+          }`
+        : "Sem subcategorias",
+  },
+  establishments: {
+    fetchFn: getAllEstablishments,
+    totalSpent: (e) => e.total_spent || 0,
+    name: (e) => e.name,
+    id: (e) => e.id,
+    renderSubtitle: (e) => `${e.bill_count} smartbill`,
+  },
+  smartbills: {
+    fetchFn: getAllSmartBills,
+    totalSpent: (sb) => sb.total_amount || 0,
+    name: (sb) => sb.establishment_name,
+    id: (sb) => sb.id,
+    renderSubtitle: (sb) => `${sb.item_count} produtos | ${sb.purchase_date}`,
+  },
+};
+
 type ItemsOverviewProps<T extends BaseItem> = {
   items: T[];
   onItemPress: (item: T) => void;
@@ -29,6 +87,7 @@ type ItemsOverviewProps<T extends BaseItem> = {
   showSearch?: boolean;
   title?: string;
   showGraph?: boolean;
+  dataType?: DataType;
   renderTitle?: (item: T) => string;
   renderSubtitle?: (item: T) => string | undefined;
   renderValue?: (item: T) => string;
@@ -40,8 +99,14 @@ const ItemsOverview = <T extends BaseItem>({
   showButtons = true,
   showSearch = false,
   showGraph = true,
-  renderTitle = (item) => item.name,
-  renderSubtitle = (item) => item.category_name,
+  dataType,
+  renderTitle = (item) => truncateString(item.name, MAX_ITEM_NAME_LENGTH),
+  renderSubtitle = (item) => {
+    if (dataType && dataMappers[dataType].renderSubtitle) {
+      return dataMappers[dataType].renderSubtitle(item);
+    }
+    return item.category_name;
+  },
   renderValue = (item) => `${item.total_spent.toFixed(2)}€`,
 }: ItemsOverviewProps<T>) => {
   const navigation = useNavigation() as any;
@@ -126,7 +191,7 @@ const ItemsOverview = <T extends BaseItem>({
                       color: "white",
                     }}
                   >
-                    Este Mês
+                    Ultimos 7 dias
                   </Text>
                   <Button
                     title="Ver Todos"

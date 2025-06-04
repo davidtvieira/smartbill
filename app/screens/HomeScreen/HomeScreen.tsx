@@ -1,10 +1,7 @@
 import Button from "@/components/Buttons/Button/Button";
 import ItemsOverview from "@/components/ItemsOverview/ItemsOverview";
 import TopText from "@/components/TopText/TopText";
-import {
-  CategoryWithSpending,
-  getAllCategories,
-} from "@/services/database/queries";
+import { Category, getWeeklyCategories } from "@/services/database/queries";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
@@ -12,17 +9,17 @@ import styles from "./styleHomeScreen";
 
 export default function HomeScreen() {
   const navigation = useNavigation();
-  const [categories, setCategories] = useState<CategoryWithSpending[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const categoriesData = await getAllCategories();
+        const categoriesData = await getWeeklyCategories();
         setCategories(categoriesData);
       } catch (err) {
-        console.error("Failed to fetch categories:", err);
-        setError("Failed to load categories");
+        console.error("Falha ao carregar categorias:", err);
+        setError("Falha ao carregar categorias");
       }
     };
 
@@ -55,13 +52,7 @@ export default function HomeScreen() {
         showGraph={true}
         onItemPress={(category) => console.log("Category pressed:", category)}
         showSearch={false}
-        renderSubtitle={(item) =>
-          item.subcategory_count
-            ? `${item.subcategory_count} subcategoria${
-                item.subcategory_count !== 1 ? "s" : ""
-              }`
-            : "Sem subcategorias"
-        }
+        dataType="categories"
       />
     </View>
   );

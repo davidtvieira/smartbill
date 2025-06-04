@@ -1,6 +1,6 @@
 import Button from "@/components/Buttons/Button/Button";
-import EditingModal from "@/components/EditingModal/EditingModal";
 import ImagePreview from "@/components/ImagePreview/ImagePreview";
+import EditingModal from "@/components/Modals/EditingModal/EditingModal";
 import ReviewPanel from "@/components/SettingUpSmartBill/ReviewPanel";
 import TopText from "@/components/TopText/TopText";
 import { Api_Call } from "@/services/API/api_call";
@@ -37,7 +37,6 @@ export default function SettingUpSmartBill() {
   const handleSaveSmartBill = async () => {
     if (!editedData) return;
 
-    // Check if all required fields are filled
     const requiredFields: (keyof SmartBillData)[] = [
       "local",
       "establishment",
