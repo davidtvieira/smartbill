@@ -12,6 +12,7 @@ interface ItemDetailsModalProps {
   selectedItem: any | null;
   selectedOption: string;
   onClose: () => void;
+  onDelete?: () => void;
 }
 
 interface Product {
@@ -27,6 +28,7 @@ export default function ItemDetailsModal({
   selectedItem,
   selectedOption,
   onClose,
+  onDelete,
 }: ItemDetailsModalProps) {
   const [products, setProducts] = React.useState<Product[]>([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -53,14 +55,14 @@ export default function ItemDetailsModal({
     setShowDeleteConfirmation(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (selectedItem?.id) {
       try {
-        deleteSmartBill(selectedItem.id);
+        await deleteSmartBill(selectedItem.id);
         setShowDeleteConfirmation(false);
         onClose();
         Alert.alert("Sucesso", "A fatura foi apagada com sucesso!", [
-          { text: "OK" },
+          { text: "OK", onPress: () => onDelete?.() },
         ]);
       } catch (error) {
         console.error("Error deleting bill:", error);

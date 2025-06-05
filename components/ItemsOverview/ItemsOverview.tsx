@@ -32,6 +32,8 @@ type ItemsOverviewProps<T extends BaseItem> = {
   showSearch?: boolean;
   title?: string;
   showGraph?: boolean;
+  headerText?: string;
+  seeAllText?: string;
   dataType?: DataType;
   renderTitle?: (item: T) => string;
   renderSubtitle?: (item: T) => string | undefined;
@@ -46,6 +48,8 @@ const ItemsOverview = <T extends BaseItem>({
   showButtons = true,
   showSearch = false,
   showGraph = true,
+  headerText,
+  seeAllText,
   renderTitle,
   renderSubtitle,
   renderValue,
@@ -61,6 +65,11 @@ const ItemsOverview = <T extends BaseItem>({
 
   const handleItemPress = (item: T) => {
     onItemPress(item);
+  };
+
+  const truncateName = (name: string, maxLength: number = 25) => {
+    if (name.length <= maxLength) return name;
+    return name.substring(0, maxLength - 3) + "...";
   };
 
   if (loading) {
@@ -83,8 +92,11 @@ const ItemsOverview = <T extends BaseItem>({
     <View style={styles.container}>
       {showGraph && (
         <DonutGraph
-          totalSpent={items.reduce((acc, curr) => acc + curr.total_spent, 0)}
-          content={items.map((item) => ({
+          totalSpent={filteredItems.reduce(
+            (acc, curr) => acc + curr.total_spent,
+            0
+          )}
+          content={filteredItems.map((item) => ({
             name: item.name,
             total_spent: item.total_spent,
           }))}
@@ -98,63 +110,72 @@ const ItemsOverview = <T extends BaseItem>({
           placeholder="Pesquisar..."
         />
       )}
-      {showButtons && (
-        <View>
-          <Button
-            title="Smart Bill"
-            onPress={() => navigation.navigate("AddSmartBill" as never)}
-            variant="primary"
-          />
-          <View style={styles.rowButtons}>
+
+      <View>
+        {showButtons && (
+          <View>
             <Button
-              title="Receitas"
-              onPress={() => console.log("Receitas clicked")}
-              variant="disabled"
+              title="Smart Bill"
+              onPress={() => navigation.navigate("AddSmartBill" as never)}
+              variant="primary"
             />
-            <Button
-              title="Dividir Despesas"
-              onPress={() => console.log("Dividir Despesas clicked")}
-              variant="disabled"
-            />
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              width: "100%",
-            }}
-          >
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                width: "100%",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 20,
-                  fontWeight: "bold",
-                  color: "white",
-                }}
-              >
-                Ultimos 7 dias
-              </Text>
-              <Button
-                title="Ver Todos"
-                onPress={() => navigation.navigate("FilterScreen" as never)}
-                variant="onlyText"
-              />
+
+            <View style={styles.rowButtons}>
+              <View style={{ flex: 1 }}>
+                <Button
+                  title="Receitas"
+                  onPress={() => console.log("Receitas clicked")}
+                  variant="secondary"
+                  disabled
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Button
+                  title="Dividir Despesas"
+                  onPress={() => console.log("Dividir Despesas clicked")}
+                  variant="secondary"
+                  disabled
+                />
+              </View>
             </View>
           </View>
+        )}
+
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            width: "100%",
+            alignItems: "center",
+            paddingTop: 16,
+          }}
+        >
+          {headerText && (
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: "bold",
+                color: "white",
+              }}
+            >
+              {headerText}
+            </Text>
+          )}
+          {seeAllText && (
+            <Button
+              title={seeAllText}
+              onPress={() => navigation.navigate("FilterScreen" as never)}
+              variant="onlyText"
+            />
+          )}
         </View>
-      )}
+      </View>
+
       <ScrollView>
         {filteredItems.map((item) => (
           <ItemButton
             key={`${item.id}-${item.name}`}
-            title={renderTitle ? renderTitle(item) : item.name}
+            title={truncateName(renderTitle ? renderTitle(item) : item.name)}
             subtitle={renderSubtitle?.(item)}
             value={
               renderValue

@@ -5,7 +5,19 @@ export default StyleSheet.create({
     flex: 1,
     justifyContent: "center",
   },
- 
+  apiKeyMessage: {
+    margin: 20,
+    padding: 15,
+    backgroundColor: '#fff3cd',
+    borderLeftWidth: 4,
+    borderLeftColor: '#ffc107',
+    borderRadius: 4,
+  },
+  apiKeyText: {
+    color: '#856404',
+    fontSize: 14,
+    lineHeight: 20,
+  },
   buttonWrapper: {
     flex: 1,
   },

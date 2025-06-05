@@ -1,6 +1,7 @@
 import Button from "@/components/Buttons/Button/Button";
 import TopText from "@/components/TopText/TopText";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import styles from "./styleSettingScreen";
@@ -14,6 +15,7 @@ const MODEL_OPTIONS = [
 ];
 
 export default function SettingsScreen() {
+  const navigation = useNavigation();
   const [apiKey, setApiKey] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [showModelDropdown, setShowModelDropdown] = useState(false);
@@ -59,10 +61,7 @@ export default function SettingsScreen() {
         AsyncStorage.setItem("aiModelEndpoint", selectedModel),
       ]);
 
-      setSaveMessage({
-        text: "Configurações salvas com sucesso!",
-        type: "success",
-      });
+      navigation.goBack();
     } catch (error) {
       console.error("Failed to save settings", error);
       setSaveMessage({
@@ -71,9 +70,6 @@ export default function SettingsScreen() {
       });
     } finally {
       setIsSaving(false);
-      if (saveMessage?.type === "success") {
-        setTimeout(() => setSaveMessage(null), 3000);
-      }
     }
   };
 
@@ -119,6 +115,7 @@ export default function SettingsScreen() {
           value={apiKey}
           onChangeText={setApiKey}
           placeholder="Insira sua chave da API"
+          placeholderTextColor="gray"
           secureTextEntry={true}
           autoCapitalize="none"
           autoCorrect={false}

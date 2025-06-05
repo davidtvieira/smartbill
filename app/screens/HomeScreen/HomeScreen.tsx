@@ -12,19 +12,15 @@ export default function HomeScreen() {
   const navigation = useNavigation();
   const [categories, setCategories] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [refreshing, setRefreshing] = useState(false);
 
   const fetchData = useCallback(async () => {
     try {
-      setRefreshing(true);
       const categoriesData = await getWeeklyCategories();
       setCategories(categoriesData);
       setError(null);
     } catch (err) {
       console.error("Falha ao carregar categorias:", err);
       setError("Falha ao carregar categorias");
-    } finally {
-      setRefreshing(false);
     }
   }, []);
 
@@ -65,6 +61,8 @@ export default function HomeScreen() {
         onItemPress={() => {}}
         showButtons={true}
         showGraph={true}
+        headerText="Ultimos 7 Dias"
+        seeAllText="Ver todos"
         showSearch={false}
         renderSubtitle={(category) =>
           category.subcategory_count

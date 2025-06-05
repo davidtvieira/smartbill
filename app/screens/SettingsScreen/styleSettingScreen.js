@@ -15,6 +15,7 @@ export default StyleSheet.create({
     color: "white",
   },
   input: {
+    maxHeight: 40,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 15,
@@ -36,7 +37,6 @@ paddingLeft: 10,
     alignItems: "center",
     marginTop: 8,
   },
-
 
   messageText: {
     marginTop: 8,

@@ -147,7 +147,14 @@ export default function FilterScreen() {
       selectedOption === "smartbills" ||
       selectedOption === "subcategory-products"
     ) {
-      setSelectedItem(item);
+      if (selectedOption === "subcategory-products") {
+        setSelectedItem({
+          ...item,
+          subcategory_name: selectedSubcategoryName,
+        });
+      } else {
+        setSelectedItem(item);
+      }
       setShowItemModal(true);
     } else if (selectedOption === "establishments") {
       setSelectedEstablishment(item.id);
@@ -259,10 +266,11 @@ export default function FilterScreen() {
             </View>
           )}
         </View>
-        <View style={{ flex: 1, marginTop: 16 }}>
+        <View style={{ flex: 1 }}>
           <ItemsOverview
             items={data}
             onItemPress={handleItemPress}
+            headerText="Este Mês"
             showSearch={true}
             showButtons={false}
             dataType={selectedOption}
@@ -275,6 +283,10 @@ export default function FilterScreen() {
         selectedItem={selectedItem}
         selectedOption={selectedOption}
         onClose={() => {
+          setShowItemModal(false);
+        }}
+        onDelete={() => {
+          fetchData(selectedOption);
           setShowItemModal(false);
         }}
       />

@@ -24,32 +24,10 @@ export default StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
-  breadcrumbs: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: '#f8f8f8',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
-  breadcrumbContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  breadcrumbText: {
-    fontSize: 14,
-    color: '#007AFF',
-    fontWeight: '500',
-  },
-  breadcrumbSeparator: {
-    fontSize: 14,
-    color: '#666',
-    marginHorizontal: 4,
-  },
+  
   container: {
     flex: 1,
+    
  
   },
   modalContainer: {
