@@ -294,3 +294,53 @@ export const getThisMonthProductsBySubcategory = async (subcategoryId: number): 
     return [];
   }
 };
+
+export const deleteSmartBill = async (smartBillId: number): Promise<boolean> => {
+  try {
+    await db.runAsync('BEGIN TRANSACTION');
+
+    // First, verify the smartbill exists
+    const smartBill = await db.getAllAsync<{id: number, establishment_id: number}>(
+      'SELECT id, establishment_id FROM SmartBill WHERE id = ?',
+      [smartBillId]
+    );
+
+    if (!smartBill) {
+      await db.runAsync('ROLLBACK');
+      console.log('SmartBill not found:', smartBillId);
+      return false;
+    }
+
+    // Delete the smartbill (this will cascade to products due to foreign key)
+    await db.runAsync('DELETE FROM SmartBill WHERE id = ?', [smartBillId]);
+
+    // Check if the establishment has any other smartbills
+    const establishmentCount = await db.getAllAsync<{count: number}>(
+      'SELECT COUNT(*) as count FROM SmartBill WHERE establishment_id = ?',
+      [smartBill[0].establishment_id]
+    );
+
+    // If no more smartbills for this establishment, delete it
+    if (establishmentCount && establishmentCount[0].count === 0) {
+      await db.runAsync('DELETE FROM Establishment WHERE id = ?', [smartBill[0].establishment_id]);
+    }
+
+    // Clean up orphaned categories and subcategories
+    await db.runAsync(`
+      DELETE FROM Category 
+      WHERE id NOT IN (SELECT DISTINCT category_id FROM Product)
+    `);
+
+    await db.runAsync(`
+      DELETE FROM Subcategory 
+      WHERE id NOT IN (SELECT DISTINCT subcategory_id FROM Product WHERE subcategory_id IS NOT NULL)
+    `);
+
+    await db.runAsync('COMMIT');
+    return true;
+  } catch (error) {
+    console.error('Error deleting smartbill:', error);
+    await db.runAsync('ROLLBACK');
+    return false;
+  }
+};

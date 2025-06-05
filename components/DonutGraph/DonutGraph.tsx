@@ -45,6 +45,13 @@ const DonutGraph = ({ totalSpent, size, content }: DonutGraphProps) => {
         {series.length > 0 && (
           <PieChart widthAndHeight={size} series={series} cover={0.6} />
         )}
+        {series.length === 0 && (
+          <PieChart
+            widthAndHeight={size}
+            series={[{ value: 1, color: "#F47A64" }]}
+            cover={0.6}
+          />
+        )}
         <View style={styles.numberContainer}>
           <Text
             style={{ fontSize: size / 10, fontWeight: "bold", color: "white" }}

@@ -10,9 +10,9 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: "#273C47",
     padding: 20,
-    borderRadius: 10,
-    maxHeight: "80%",
     width: "90%",
+    maxHeight:"80%",
+    borderRadius: 10,
     alignSelf: "center",
   },
   modalTitle: {
@@ -32,15 +32,49 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 20,
   },
-  closeButtonText: {
-    color: "white",
-    textAlign: "center",
-    fontSize: 16,
-  },
   divider: {
     height: 1,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     marginVertical: 15,
+  },
+  confirmationOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+  },
+  confirmationDialog: {
+    backgroundColor: '#273C47',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+    maxWidth: 400,
+  },
+  confirmationTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+    color: 'white',
+  },
+  confirmationText: {
+    fontSize: 16,
+    marginBottom: 20,
+    textAlign: 'center',
+    color: 'white',
+  },
+  confirmationButtons: {
+    flexDirection: 'row',
+
+    gap: 10,
+  },
+  confirmationButton: {
+    flex: 1,
   },
 });
 

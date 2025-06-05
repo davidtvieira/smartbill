@@ -81,7 +81,7 @@ const ItemsOverview = <T extends BaseItem>({
 
   return (
     <View style={styles.container}>
-      {showGraph && items.length > 0 && (
+      {showGraph && (
         <DonutGraph
           totalSpent={items.reduce((acc, curr) => acc + curr.total_spent, 0)}
           content={items.map((item) => ({
@@ -125,30 +125,28 @@ const ItemsOverview = <T extends BaseItem>({
               width: "100%",
             }}
           >
-            {filteredItems.length > 0 && (
-              <View
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                width: "100%",
+              }}
+            >
+              <Text
                 style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  width: "100%",
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  color: "white",
                 }}
               >
-                <Text
-                  style={{
-                    fontSize: 20,
-                    fontWeight: "bold",
-                    color: "white",
-                  }}
-                >
-                  Ultimos 7 dias
-                </Text>
-                <Button
-                  title="Ver Todos"
-                  onPress={() => navigation.navigate("FilterScreen" as never)}
-                  variant="onlyText"
-                />
-              </View>
-            )}
+                Ultimos 7 dias
+              </Text>
+              <Button
+                title="Ver Todos"
+                onPress={() => navigation.navigate("FilterScreen" as never)}
+                variant="onlyText"
+              />
+            </View>
           </View>
         </View>
       )}

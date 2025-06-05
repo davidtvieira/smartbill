@@ -6,7 +6,13 @@ import styles from "./styleButton";
 interface ButtonProps {
   title: string;
   onPress: () => void;
-  variant?: "primary" | "secondary" | "alternative" | "disabled" | "onlyText";
+  variant?:
+    | "primary"
+    | "secondary"
+    | "alternative"
+    | "disabled"
+    | "onlyText"
+    | "danger";
 }
 
 export default function Button({
@@ -20,6 +26,7 @@ export default function Button({
     alternative: styles.alternative,
     disabled: styles.disabled,
     onlyText: styles.onlyText,
+    danger: styles.danger,
   };
 
   const buttonStyle = variantStyles[variant] || styles.primary;

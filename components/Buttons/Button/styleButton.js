@@ -23,8 +23,10 @@ export default StyleSheet.create({
   disabled : {
     opacity: 0.5
   },
-
   onlyText: {
     backgroundColor: "transparent",
-  }
+  },
+  danger: {
+    backgroundColor: "#FF586D",
+  },
 });

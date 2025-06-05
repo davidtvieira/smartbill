@@ -3,8 +3,8 @@ import Button from "@/components/Buttons/Button/Button";
 import ItemsOverview from "@/components/ItemsOverview/ItemsOverview";
 import TopText from "@/components/TopText/TopText";
 import { getWeeklyCategories } from "@/services/database/queries";
-import { useNavigation } from "@react-navigation/native";
-import { useEffect, useState } from "react";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useCallback, useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import styles from "./styleHomeScreen";
 
@@ -12,20 +12,31 @@ export default function HomeScreen() {
   const navigation = useNavigation();
   const [categories, setCategories] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchData = useCallback(async () => {
+    try {
+      setRefreshing(true);
+      const categoriesData = await getWeeklyCategories();
+      setCategories(categoriesData);
+      setError(null);
+    } catch (err) {
+      console.error("Falha ao carregar categorias:", err);
+      setError("Falha ao carregar categorias");
+    } finally {
+      setRefreshing(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const categoriesData = await getWeeklyCategories();
-        setCategories(categoriesData);
-      } catch (err) {
-        console.error("Falha ao carregar categorias:", err);
-        setError("Falha ao carregar categorias");
-      }
-    };
-
     fetchData();
-  }, []);
+  }, [fetchData]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [fetchData])
+  );
 
   if (error) {
     return (
@@ -34,11 +45,6 @@ export default function HomeScreen() {
       </View>
     );
   }
-
-  const totalSpent = categories.reduce(
-    (sum, category) => sum + (category.total_spent || 0),
-    0
-  );
 
   return (
     <View style={styles.container}>

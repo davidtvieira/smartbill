@@ -36,7 +36,10 @@ export default function FilterScreen() {
   const [selectedEstablishment, setSelectedEstablishment] = useState<
     number | null
   >(null);
+  const [selectedEstablishmentName, setSelectedEstablishmentName] =
+    useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [selectedCategoryName, setSelectedCategoryName] = useState<string>("");
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
   const [showItemModal, setShowItemModal] = useState(false);
   const [showBackButton, setShowBackButton] = useState(false);
@@ -148,10 +151,12 @@ export default function FilterScreen() {
       setShowItemModal(true);
     } else if (selectedOption === "establishments") {
       setSelectedEstablishment(item.id);
+      setSelectedEstablishmentName(item.name);
       setSelectedOption("smartbills");
       setShowBackButton(true);
     } else if (selectedOption === "categories") {
       setSelectedCategory(item.id);
+      setSelectedCategoryName(item.name);
       setSelectedOption("subcategories");
       setShowBackButton(true);
     } else if (selectedOption === "subcategories") {
@@ -170,9 +175,13 @@ export default function FilterScreen() {
     } else if (selectedOption === "subcategories") {
       setSelectedOption("categories");
       setSelectedCategory(null);
+      setSelectedCategoryName("");
+      setSelectedSubcategory(null);
+      setSelectedSubcategoryName("");
     } else if (selectedOption === "smartbills") {
       setSelectedOption("establishments");
       setSelectedEstablishment(null);
+      setSelectedEstablishmentName("");
     }
     setShowBackButton(
       selectedOption !== "categories" && selectedOption !== "establishments"
@@ -182,7 +191,9 @@ export default function FilterScreen() {
   const handleOptionSelect = (option: DataType) => {
     setSelectedOption(option);
     setSelectedEstablishment(null);
+    setSelectedEstablishmentName("");
     setSelectedCategory(null);
+    setSelectedCategoryName("");
     setSelectedSubcategory(null);
     setSelectedSubcategoryName("");
     setShowBackButton(false);
@@ -213,20 +224,24 @@ export default function FilterScreen() {
             )}
             <TopText
               first={
-                selectedEstablishment
-                  ? data.find((item) => item.id === selectedEstablishment)
-                      ?.name || "Estabelecimento"
-                  : selectedOption === "subcategory-products"
+                selectedOption === "subcategory-products"
                   ? selectedSubcategoryName || "Produtos"
                   : selectedOption === "subcategories"
-                  ? `${data.find((item) => item.id === selectedCategory)?.name}`
+                  ? selectedCategoryName || "Categoria"
+                  : selectedEstablishment
+                  ? selectedEstablishmentName || "Estabelecimento"
                   : options.find((o) => o.value === selectedOption)?.label ||
                     "Produtos"
               }
               second={" na minha"}
-              third={"Smart Bill"}
-              clickable={!showBackButton}
-              onClick={() => !showBackButton && setShowDropdown(!showDropdown)}
+              third={
+                selectedOption === "subcategories" ||
+                selectedOption === "subcategory-products"
+                  ? ""
+                  : "Smart Bill"
+              }
+              clickable={true}
+              onClick={() => setShowDropdown(!showDropdown)}
             />
           </View>
 
