@@ -2,11 +2,13 @@ import ItemsOverview from "@/components/ItemsOverview/ItemsOverview";
 import ItemDetailsModal from "@/components/Modals/ItemDetailsModal/ItemDetailsModal";
 import TopText from "@/components/TopText/TopText";
 import {
-  getMonthlyCategories,
-  getMonthlyEstablishments,
-  getMonthlyProducts,
-  getMonthlySmartBills,
-  getSmartBillsByEstablishment,
+  getThisMonthCategories,
+  getThisMonthEstablishments,
+  getThisMonthProducts,
+  getThisMonthProductsBySubcategory,
+  getThisMonthSmartBills,
+  getThisMonthSmartBillsByEstablishment,
+  getThisMonthSubcategories,
 } from "@/services/database/queries";
 import { useEffect, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -16,7 +18,9 @@ export type DataType =
   | "products"
   | "establishments"
   | "smartbills"
-  | "categories";
+  | "categories"
+  | "subcategories"
+  | "subcategory-products";
 
 interface BaseItem {
   id: number;
@@ -32,8 +36,15 @@ export default function FilterScreen() {
   const [selectedEstablishment, setSelectedEstablishment] = useState<
     number | null
   >(null);
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
   const [showItemModal, setShowItemModal] = useState(false);
+  const [showBackButton, setShowBackButton] = useState(false);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<number | null>(
+    null
+  );
+  const [selectedSubcategoryName, setSelectedSubcategoryName] =
+    useState<string>("");
 
   const options = [
     { label: "Produtos", value: "products" as const },
@@ -52,34 +63,57 @@ export default function FilterScreen() {
 
   const dataMappers: Record<DataType, DataMapper<any>> = {
     products: {
-      fetchFn: getMonthlyProducts,
+      fetchFn: getThisMonthProducts,
       totalSpent: (p) => p.unit_price * (p.quantity || 1),
       name: (p) => p.name,
       id: (p) => p.id,
+      renderSubtitle: (p) => `${p.category_name}`,
     },
     categories: {
-      fetchFn: getMonthlyCategories,
+      fetchFn: getThisMonthCategories,
       totalSpent: (c) => c.total_spent || 0,
       name: (c) => c.name,
       id: (c) => c.id,
+      renderSubtitle: (c) => `Subcategorias: ${c.subcategory_count}`,
+    },
+    subcategories: {
+      fetchFn: async () => {
+        if (!selectedCategory) return [];
+        return getThisMonthSubcategories(selectedCategory);
+      },
+      totalSpent: (s) => s.total_spent || 0,
+      name: (s) => s.name,
+      id: (s) => s.id,
+      renderSubtitle: (s) => `${s.item_count || 0} itens`,
     },
     establishments: {
-      fetchFn: getMonthlyEstablishments,
+      fetchFn: getThisMonthEstablishments,
       totalSpent: (e) => e.total_spent || 0,
       name: (e) => e.name,
       id: (e) => e.id,
-      renderSubtitle: (e) => `Última visita: ${e.last_visit}`,
+      renderSubtitle: (e) => `smartbills:  ${e.bill_count}`,
     },
     smartbills: {
       fetchFn: async () => {
         if (selectedEstablishment) {
-          return getSmartBillsByEstablishment(selectedEstablishment);
+          return getThisMonthSmartBillsByEstablishment(selectedEstablishment);
         }
-        return getMonthlySmartBills();
+        return getThisMonthSmartBills();
       },
       totalSpent: (sb) => sb.amount || 0,
       name: (sb) => sb.establishment_name,
       id: (sb) => sb.id,
+      renderSubtitle: (sb) => `${sb.purchase_date} | ${sb.item_count} produtos`,
+    },
+    "subcategory-products": {
+      fetchFn: async () => {
+        if (!selectedSubcategory) return [];
+        return getThisMonthProductsBySubcategory(selectedSubcategory);
+      },
+      totalSpent: (p) => p.unit_price * (p.quantity || 1),
+      name: (p) => p.name,
+      id: (p) => p.id,
+      renderSubtitle: (p) => `${p.establishment_name}`,
     },
   };
 
@@ -104,25 +138,60 @@ export default function FilterScreen() {
     }
   };
 
-  const handleItemPress = async (item: any) => {
-    if (selectedOption === "products" || selectedOption === "smartbills") {
+  const handleItemPress = (item: any) => {
+    if (
+      selectedOption === "products" ||
+      selectedOption === "smartbills" ||
+      selectedOption === "subcategory-products"
+    ) {
       setSelectedItem(item);
       setShowItemModal(true);
     } else if (selectedOption === "establishments") {
       setSelectedEstablishment(item.id);
       setSelectedOption("smartbills");
+      setShowBackButton(true);
+    } else if (selectedOption === "categories") {
+      setSelectedCategory(item.id);
+      setSelectedOption("subcategories");
+      setShowBackButton(true);
+    } else if (selectedOption === "subcategories") {
+      setSelectedSubcategory(item.id);
+      setSelectedSubcategoryName(item.name);
+      setSelectedOption("subcategory-products");
+      setShowBackButton(true);
     }
+  };
+
+  const handleBack = () => {
+    if (selectedOption === "subcategory-products") {
+      setSelectedOption("subcategories");
+      setSelectedSubcategory(null);
+      setSelectedSubcategoryName("");
+    } else if (selectedOption === "subcategories") {
+      setSelectedOption("categories");
+      setSelectedCategory(null);
+    } else if (selectedOption === "smartbills") {
+      setSelectedOption("establishments");
+      setSelectedEstablishment(null);
+    }
+    setShowBackButton(
+      selectedOption !== "categories" && selectedOption !== "establishments"
+    );
   };
 
   const handleOptionSelect = (option: DataType) => {
     setSelectedOption(option);
     setSelectedEstablishment(null);
+    setSelectedCategory(null);
+    setSelectedSubcategory(null);
+    setSelectedSubcategoryName("");
+    setShowBackButton(false);
     setShowDropdown(false);
   };
 
   useEffect(() => {
     fetchData(selectedOption);
-  }, [selectedOption, selectedEstablishment]);
+  }, [selectedOption, selectedEstablishment, selectedCategory]);
 
   if (error) {
     return (
@@ -136,16 +205,30 @@ export default function FilterScreen() {
     <View style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>
         <View>
-          <TopText
-            first={
-              options.find((o) => o.value === selectedOption)?.label ||
-              "Produtos"
-            }
-            second=" na minha"
-            third="Smart Bill"
-            clickable={true}
-            onClick={() => setShowDropdown(!showDropdown)}
-          />
+          <View>
+            {showBackButton && (
+              <TouchableOpacity onPress={handleBack}>
+                <Text>←</Text>
+              </TouchableOpacity>
+            )}
+            <TopText
+              first={
+                selectedEstablishment
+                  ? data.find((item) => item.id === selectedEstablishment)
+                      ?.name || "Estabelecimento"
+                  : selectedOption === "subcategory-products"
+                  ? selectedSubcategoryName || "Produtos"
+                  : selectedOption === "subcategories"
+                  ? `${data.find((item) => item.id === selectedCategory)?.name}`
+                  : options.find((o) => o.value === selectedOption)?.label ||
+                    "Produtos"
+              }
+              second={" na minha"}
+              third={"Smart Bill"}
+              clickable={!showBackButton}
+              onClick={() => !showBackButton && setShowDropdown(!showDropdown)}
+            />
+          </View>
 
           {showDropdown && (
             <View style={styles.dropdown}>
@@ -168,6 +251,7 @@ export default function FilterScreen() {
             showSearch={true}
             showButtons={false}
             dataType={selectedOption}
+            renderSubtitle={dataMappers[selectedOption]?.renderSubtitle}
           />
         </View>
       </View>
@@ -177,7 +261,6 @@ export default function FilterScreen() {
         selectedOption={selectedOption}
         onClose={() => {
           setShowItemModal(false);
-          setSelectedItem(null);
         }}
       />
     </View>

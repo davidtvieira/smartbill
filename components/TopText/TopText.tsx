@@ -7,6 +7,8 @@ import {
 } from "react-native";
 import styles from "./styleTopText";
 
+const MAX_TEXT_LENGTH = 18; // Maximum number of characters to show
+
 interface TopTextProps {
   first?: string;
   second?: string;
@@ -21,6 +23,11 @@ export default function TopText({
   clickable = false,
   onClick,
 }: TopTextProps) {
+  const truncatedFirst =
+    first && first.length > MAX_TEXT_LENGTH
+      ? `${first.substring(0, MAX_TEXT_LENGTH)}...`
+      : first;
+
   const firstTextStyle: StyleProp<TextStyle> = [
     styles.first,
     clickable && styles.underline,
@@ -40,7 +47,9 @@ export default function TopText({
         }}
       >
         <TouchableOpacity onPress={onClick} disabled={!clickable}>
-          {first && <Text style={firstTextStyle}>{first}</Text>}
+          {truncatedFirst && (
+            <Text style={firstTextStyle}>{truncatedFirst}</Text>
+          )}
         </TouchableOpacity>
         {second && <Text style={styles.second}>{second}</Text>}
       </View>

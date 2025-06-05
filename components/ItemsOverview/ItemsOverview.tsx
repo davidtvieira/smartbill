@@ -1,23 +1,11 @@
 import Button from "@/components/Buttons/Button/Button";
 import DonutGraph from "@/components/DonutGraph/DonutGraph";
 import SearchInput from "@/components/SearchInput/SearchInput";
-import {
-  getAllCategories,
-  getAllEstablishments,
-  getAllProducts,
-  getAllSmartBills,
-} from "@/services/database/queries";
 import { useNavigation } from "expo-router";
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import ItemButton from "../Buttons/ItemButton/ItemButton";
 import styles from "./styleItemsOverview";
-
-const MAX_ITEM_NAME_LENGTH = 25;
-const truncateString = (str: string, maxLength: number) => {
-  if (str.length <= maxLength) return str;
-  return `${str.substring(0, maxLength - 3)}...`;
-};
 
 type BaseItem = {
   id: string | number;
@@ -29,56 +17,13 @@ type BaseItem = {
   [key: string]: any;
 };
 
-type ItemSpending = {
-  name: string;
-  total: number;
-};
-
-type DataType = "products" | "establishments" | "smartbills" | "categories";
-
-type DataMapper<T> = {
-  fetchFn: () => Promise<T[]>;
-  totalSpent: (item: T) => number;
-  name: (item: T) => string;
-  id: (item: T) => string | number;
-  renderSubtitle?: (item: T) => string;
-};
-
-const dataMappers: Record<DataType, DataMapper<any>> = {
-  products: {
-    fetchFn: getAllProducts,
-    totalSpent: (p) => p.unit_price * (p.quantity || 1),
-    name: (p) => p.name,
-    id: (p) => p.id,
-    renderSubtitle: (p) => `${p.category_name}`,
-  },
-  categories: {
-    fetchFn: getAllCategories,
-    totalSpent: (c) => c.total_spent || 0,
-    name: (c) => c.name,
-    id: (c) => c.id,
-    renderSubtitle: (c) =>
-      c.subcategory_count
-        ? `${c.subcategory_count} subcategoria${
-            c.subcategory_count !== 1 ? "s" : ""
-          }`
-        : "Sem subcategorias",
-  },
-  establishments: {
-    fetchFn: getAllEstablishments,
-    totalSpent: (e) => e.total_spent || 0,
-    name: (e) => e.name,
-    id: (e) => e.id,
-    renderSubtitle: (e) => `${e.bill_count} smartbill`,
-  },
-  smartbills: {
-    fetchFn: getAllSmartBills,
-    totalSpent: (sb) => sb.total_amount || 0,
-    name: (sb) => sb.establishment_name,
-    id: (sb) => sb.id,
-    renderSubtitle: (sb) => `${sb.item_count} produtos | ${sb.purchase_date}`,
-  },
-};
+type DataType =
+  | "products"
+  | "establishments"
+  | "smartbills"
+  | "categories"
+  | "subcategories"
+  | "subcategory-products";
 
 type ItemsOverviewProps<T extends BaseItem> = {
   items: T[];
@@ -91,6 +36,8 @@ type ItemsOverviewProps<T extends BaseItem> = {
   renderTitle?: (item: T) => string;
   renderSubtitle?: (item: T) => string | undefined;
   renderValue?: (item: T) => string;
+  loading?: boolean;
+  error?: string | null;
 };
 
 const ItemsOverview = <T extends BaseItem>({
@@ -99,131 +46,127 @@ const ItemsOverview = <T extends BaseItem>({
   showButtons = true,
   showSearch = false,
   showGraph = true,
-  dataType,
-  renderTitle = (item) => truncateString(item.name, MAX_ITEM_NAME_LENGTH),
-  renderSubtitle = (item) => {
-    if (dataType && dataMappers[dataType].renderSubtitle) {
-      return dataMappers[dataType].renderSubtitle(item);
-    }
-    return item.category_name;
-  },
-  renderValue = (item) => `${item.total_spent.toFixed(2)}€`,
+  renderTitle,
+  renderSubtitle,
+  renderValue,
+  loading = false,
+  error = null,
 }: ItemsOverviewProps<T>) => {
-  const navigation = useNavigation() as any;
   const [searchQuery, setSearchQuery] = useState("");
+  const navigation = useNavigation();
 
-  const filteredItems = showSearch
-    ? items.filter((item) =>
-        item.name.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : items;
+  const filteredItems = items.filter((item) =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  const itemSpending = filteredItems.reduce<ItemSpending[]>((acc, item) => {
-    const itemTotal = "total_spent" in item ? item.total_spent : 0;
-    const existingItem = acc.find((i) => i.name === item.name);
+  const handleItemPress = (item: T) => {
+    onItemPress(item);
+  };
 
-    if (existingItem) {
-      existingItem.total += itemTotal;
-    } else {
-      acc.push({
-        name: item.name,
-        total: itemTotal,
-      });
-    }
-    return acc;
-  }, []);
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
-  const totalSpent = itemSpending.reduce((acc, curr) => acc + curr.total, 0);
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text>Error: {error}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      {showGraph && itemSpending.length > 0 && (
+      {showGraph && items.length > 0 && (
         <DonutGraph
-          totalSpent={totalSpent}
-          content={itemSpending.map((item) => ({
+          totalSpent={items.reduce((acc, curr) => acc + curr.total_spent, 0)}
+          content={items.map((item) => ({
             name: item.name,
-            total_spent: item.total,
+            total_spent: item.total_spent,
           }))}
           size={250}
         />
       )}
-
-      <View style={styles.listContainer}>
-        {showButtons && (
-          <View>
+      {showSearch && (
+        <SearchInput
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder="Pesquisar..."
+        />
+      )}
+      {showButtons && (
+        <View>
+          <Button
+            title="Smart Bill"
+            onPress={() => navigation.navigate("AddSmartBill" as never)}
+            variant="primary"
+          />
+          <View style={styles.rowButtons}>
             <Button
-              title="Smart Bill"
-              onPress={() => navigation.navigate("AddSmartBill" as never)}
-              variant="primary"
+              title="Receitas"
+              onPress={() => console.log("Receitas clicked")}
+              variant="disabled"
             />
-            <View style={styles.rowButtons}>
-              <Button
-                title="Receitas"
-                onPress={() => console.log("Receitas clicked")}
-                variant="disabled"
-              />
-              <Button
-                title="Dividir Despesas"
-                onPress={() => console.log("Dividir Despesas clicked")}
-                variant="disabled"
-              />
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                width: "100%",
-              }}
-            >
-              {filteredItems.length > 0 && (
-                <View
+            <Button
+              title="Dividir Despesas"
+              onPress={() => console.log("Dividir Despesas clicked")}
+              variant="disabled"
+            />
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "100%",
+            }}
+          >
+            {filteredItems.length > 0 && (
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  width: "100%",
+                }}
+              >
+                <Text
                   style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    width: "100%",
+                    fontSize: 20,
+                    fontWeight: "bold",
+                    color: "white",
                   }}
                 >
-                  <Text
-                    style={{
-                      fontSize: 20,
-                      fontWeight: "bold",
-                      color: "white",
-                    }}
-                  >
-                    Ultimos 7 dias
-                  </Text>
-                  <Button
-                    title="Ver Todos"
-                    onPress={() => navigation.navigate("FilterScreen" as never)}
-                    variant="onlyText"
-                  />
-                </View>
-              )}
-            </View>
+                  Ultimos 7 dias
+                </Text>
+                <Button
+                  title="Ver Todos"
+                  onPress={() => navigation.navigate("FilterScreen" as never)}
+                  variant="onlyText"
+                />
+              </View>
+            )}
           </View>
-        )}
-        {showSearch && (
-          <SearchInput
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholder="Pesquisar..."
+        </View>
+      )}
+      <ScrollView>
+        {filteredItems.map((item) => (
+          <ItemButton
+            key={`${item.id}-${item.name}`}
+            title={renderTitle ? renderTitle(item) : item.name}
+            subtitle={renderSubtitle?.(item)}
+            value={
+              renderValue
+                ? renderValue(item)
+                : `€${item.total_spent.toFixed(2)}`
+            }
+            onPress={() => handleItemPress(item)}
           />
-        )}
-
-        <ScrollView contentContainerStyle={styles.listContent}>
-          {filteredItems.map((item) => (
-            <View key={item.id.toString()}>
-              <ItemButton
-                title={renderTitle(item)}
-                value={renderValue(item)}
-                subtitle={renderSubtitle(item)}
-                onPress={() => onItemPress(item)}
-              />
-            </View>
-          ))}
-        </ScrollView>
-      </View>
+        ))}
+      </ScrollView>
     </View>
   );
 };

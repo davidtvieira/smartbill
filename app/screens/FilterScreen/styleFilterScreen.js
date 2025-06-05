@@ -50,7 +50,7 @@ export default StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+ 
   },
   modalContainer: {
     flex: 1,
@@ -87,4 +87,31 @@ export default StyleSheet.create({
     textAlign: "center",
     fontWeight: "bold",
   },
+  filterContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 16,
+    backgroundColor: "#fff",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e0e0e0",
+  },
+  filterButton: {
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: "#007AFF",
+    marginRight: 8,
+  },
+  filterButtonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  filterButtonActive: {
+    backgroundColor: "#0056b3",
+  },
+  filterButtonTextActive: {
+    color: "#fff",
+  },
+
 });

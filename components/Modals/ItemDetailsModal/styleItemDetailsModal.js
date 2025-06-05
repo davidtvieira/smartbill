@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 10,
     color: "white",
   },
   modalText: {
@@ -37,7 +37,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 16,
   },
-  
+  divider: {
+    height: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    marginVertical: 15,
+  },
 });
 
 export default styles;

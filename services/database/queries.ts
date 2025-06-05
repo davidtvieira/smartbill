@@ -47,6 +47,14 @@ export interface SmartBill {
   item_count: number;
 }
 
+export interface Category {
+  id: number;
+  name: string;
+  total_spent: number;
+  subcategory_count: number;
+  parent_id: number | null;
+}
+
 export const getWeeklyCategories = async (): Promise<Category[]> => {
   try {
     const result = await db.getAllAsync<Category>(`
@@ -71,7 +79,7 @@ export const getWeeklyCategories = async (): Promise<Category[]> => {
   }
 };
 
-export const getMonthlyProducts = async (): Promise<Product[]> => {
+export const getThisMonthProducts = async (): Promise<Product[]> => {
   try {
     const result = await db.getAllAsync<Product>(`
       SELECT 
@@ -103,9 +111,11 @@ export const getMonthlyProducts = async (): Promise<Product[]> => {
   }
 };
 
-export const getMonthlyCategories = async (): Promise<Category[]> => {
+export const getThisMonthCategories = async (options: { categoryId?: number } = {}): Promise<Category[]> => {
   try {
-    const result = await db.getAllAsync<Category>(`
+    const { categoryId } = options;
+    
+    const query = `
       SELECT 
         c.id,
         c.name,
@@ -113,13 +123,15 @@ export const getMonthlyCategories = async (): Promise<Category[]> => {
         COUNT(DISTINCT p.id) as item_count,
         (SELECT COUNT(*) FROM Subcategory s WHERE s.category_id = c.id) as subcategory_count
       FROM Category c
-      LEFT JOIN Product p ON c.id = p.category_id
+      LEFT JOIN Product p ON p.category_id = c.id
       LEFT JOIN SmartBill sb ON p.bill_id = sb.id
       WHERE sb.purchase_date >= DATE('now', 'start of month')
+      ${categoryId ? `AND c.id = ${categoryId}` : ''}
       GROUP BY c.id, c.name
       ORDER BY total_spent DESC, c.name ASC
-    `);
-    
+    `;
+
+    const result = await db.getAllAsync<Category>(query);
     return result || [];
   } catch (error) {
     console.error('Error fetching monthly categories:', error);
@@ -127,7 +139,7 @@ export const getMonthlyCategories = async (): Promise<Category[]> => {
   }
 };
 
-export const getMonthlyEstablishments = async (): Promise<Establishment[]> => {
+export const getThisMonthEstablishments = async (): Promise<Establishment[]> => {
   try {
     const result = await db.getAllAsync<Establishment>(`
       SELECT 
@@ -152,7 +164,7 @@ export const getMonthlyEstablishments = async (): Promise<Establishment[]> => {
   }
 };
 
-export const getMonthlySmartBills = async (): Promise<SmartBill[]> => {
+export const getThisMonthSmartBills = async (): Promise<SmartBill[]> => {
   try {
     const result = await db.getAllAsync<SmartBill>(`
       SELECT 
@@ -178,7 +190,7 @@ export const getMonthlySmartBills = async (): Promise<SmartBill[]> => {
   }
 };
 
-export const getMonthlySmartBillsByEstablishment = async (establishmentId: number): Promise<SmartBill[]> => {
+export const getThisMonthSmartBillsByEstablishment = async (establishmentId: number): Promise<SmartBill[]> => {
   try {
     const result = await db.getAllAsync<SmartBill>(`
       SELECT 
@@ -234,28 +246,51 @@ export const getProductsBySmartBill = async (smartBillId: number): Promise<Produ
   }
 };
 
-export const getSmartBillsByEstablishment = async (establishmentId: number): Promise<SmartBill[]> => {
+export const getThisMonthSubcategories = async (categoryId: number): Promise<Subcategory[]> => {
   try {
-    const result = await db.getAllAsync<SmartBill>(`
+    const result = await db.getAllAsync<Subcategory>(`
       SELECT 
-        sb.id,
-        sb.purchase_date,
-        sb.purchase_time,
-        e.name as establishment_name,
-        e.location as establishment_location,
-        COALESCE(SUM(p.quantity * p.unit_price), 0) as amount,
+        s.id,
+        s.name,
+        s.category_id,
+        COALESCE(SUM(p.quantity * p.unit_price), 0) as total_spent,
         COUNT(DISTINCT p.id) as item_count
-      FROM SmartBill sb
-      JOIN Establishment e ON sb.establishment_id = e.id
-      LEFT JOIN Product p ON sb.id = p.bill_id
-      WHERE e.id = ?
-      GROUP BY sb.id, sb.purchase_date, sb.purchase_time, e.name, e.location
-      ORDER BY sb.purchase_date DESC, sb.purchase_time DESC
-    `, [establishmentId]);
+      FROM Subcategory s
+      LEFT JOIN Product p ON p.subcategory_id = s.id
+      LEFT JOIN SmartBill sb ON p.bill_id = sb.id
+      WHERE s.category_id = ? 
+        AND sb.purchase_date >= DATE('now', 'start of month')
+      GROUP BY s.id, s.name, s.category_id
+      ORDER BY total_spent DESC, s.name ASC
+    `, [categoryId]);
     
     return result || [];
   } catch (error) {
-    console.error('Error fetching smartbills by establishment:', error);
+    console.error('Error fetching monthly subcategories:', error);
+    return [];
+  }
+};
+
+export const getThisMonthProductsBySubcategory = async (subcategoryId: number): Promise<Product[]> => {
+  try {
+    const result = await db.getAllAsync<Product>(`
+      SELECT 
+        p.*,
+        sb.purchase_date,
+        e.name as establishment_name,
+        c.name as category_name
+      FROM Product p
+      JOIN SmartBill sb ON p.bill_id = sb.id
+      JOIN Establishment e ON sb.establishment_id = e.id
+      JOIN Category c ON p.category_id = c.id
+      WHERE p.subcategory_id = ?
+        AND sb.purchase_date >= DATE('now', 'start of month')
+      ORDER BY sb.purchase_date DESC, p.name ASC
+    `, [subcategoryId]);
+    
+    return result || [];
+  } catch (error) {
+    console.error('Error fetching products for subcategory:', error);
     return [];
   }
 };
