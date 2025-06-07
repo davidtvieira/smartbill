@@ -27,8 +27,6 @@ export default StyleSheet.create({
   
   container: {
     flex: 1,
-    
- 
   },
   modalContainer: {
     flex: 1,
@@ -91,5 +89,40 @@ export default StyleSheet.create({
   filterButtonTextActive: {
     color: "#fff",
   },
-
+  calendarContainer: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 10,
+    margin: 10,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  dateRangeContainer: {
+    margin: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    backgroundColor: '#fff',
+  },
+  dateRangeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 15,
+  },
+  dateRangeText: {
+    fontSize: 16,
+    color: '#333',
+    marginHorizontal: 10,
+    flex: 1,
+  },
+  applyButton: {
+    marginTop: 10,
+    backgroundColor: '#007AFF',
+    borderRadius: 5,
+    padding: 10,
+  },
 });

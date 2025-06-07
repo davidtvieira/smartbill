@@ -1,6 +1,5 @@
 import { SmartBillData } from "@/app/screens/AddSmartBill/SettingUpSmartBill/SettingUpSmartBill";
 import Button from "@/components/Buttons/Button/Button";
-import DataButton from "@/components/Buttons/Button/DataButton/DataButton";
 import React from "react";
 import { Text, View } from "react-native";
 
@@ -45,9 +44,12 @@ export default function ReviewPanel({
         Produtos
       </Text>
       {data.items?.map((item, index) => (
-        <DataButton
+        <Button
           key={index}
-          item={item}
+          title={`${item.name} | Qtd: ${
+            item.quantity
+          } | €${item.unit_price.toFixed(2)}`}
+          variant="secondary"
           onPress={() => onItemEditStart(index)}
         />
       ))}

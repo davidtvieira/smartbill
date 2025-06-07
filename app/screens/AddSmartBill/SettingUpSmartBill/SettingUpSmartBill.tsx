@@ -1,7 +1,7 @@
 import Button from "@/components/Buttons/Button/Button";
 import ImagePreview from "@/components/ImagePreview/ImagePreview";
 import EditingModal from "@/components/Modals/EditingModal/EditingModal";
-import ReviewPanel from "@/components/SettingUpSmartBill/ReviewPanel";
+import ReviewPanel from "@/components/ReviewPanel/ReviewPanel";
 import TopText from "@/components/TopText/TopText";
 import { Api_Call } from "@/services/API/api_call";
 import { insertSmartBill } from "@/services/database/insert";
@@ -56,6 +56,7 @@ export default function SettingUpSmartBill() {
     try {
       await insertSmartBill(editedData);
       console.log("Smart Bill added successfully");
+      console.log(editedData);
       navigation.navigate("Home" as never);
     } catch (error) {
       console.error("Erro ao inserir Smart Bill:", error);

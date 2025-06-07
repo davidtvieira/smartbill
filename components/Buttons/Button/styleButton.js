@@ -4,6 +4,11 @@ export default StyleSheet.create({
   button: {
     borderRadius: 15,
   },
+  iconContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 10,
+  },
   text: {
     fontSize: 16,
     fontWeight: "bold",

@@ -1,13 +1,14 @@
-import React from "react";
-import { Text, TouchableOpacity } from "react-native";
+import React, { ReactNode } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 
 import styles from "./styleButton";
 
 interface ButtonProps {
-  title: string;
+  title?: string;
   onPress: () => void;
   variant?: "primary" | "secondary" | "alternative" | "onlyText" | "danger";
   disabled?: boolean;
+  icon?: ReactNode;
 }
 
 export default function Button({
@@ -15,6 +16,7 @@ export default function Button({
   onPress,
   variant = "primary",
   disabled = false,
+  icon,
 }: ButtonProps) {
   const variantStyles = {
     primary: styles.primary,
@@ -24,20 +26,27 @@ export default function Button({
     danger: styles.danger,
   };
 
-  const buttonStyle = [
-    styles.button,
-    variantStyles[variant] || styles.primary,
-    disabled && styles.disabled,
-  ];
-
   return (
     <TouchableOpacity
-      style={buttonStyle}
+      style={[
+        styles.button,
+        variantStyles[variant],
+        disabled && styles.disabled,
+      ]}
       onPress={onPress}
       activeOpacity={disabled ? 1 : 0.7}
       disabled={disabled}
     >
-      <Text style={styles.text}>{title}</Text>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {icon && <View style={styles.iconContainer}>{icon}</View>}
+        {title && <Text style={styles.text}>{title}</Text>}
+      </View>
     </TouchableOpacity>
   );
 }
