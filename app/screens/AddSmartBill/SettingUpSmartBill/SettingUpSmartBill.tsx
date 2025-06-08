@@ -8,6 +8,7 @@ import { insertSmartBill } from "@/services/database/insert";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useState } from "react";
 import { Alert, ScrollView, View } from "react-native";
+import styles from "./styleSettingUpSmartBill";
 
 export type SmartBillData = {
   local: string;
@@ -53,10 +54,22 @@ export default function SettingUpSmartBill() {
       return;
     }
 
+    // Check for items with quantity or unit_price of 0
+    const invalidItems = editedData.items.filter(
+      (item) => item.quantity <= 0 || item.unit_price <= 0
+    );
+
+    if (invalidItems.length > 0) {
+      Alert.alert(
+        "Erro ao adicionar Smart Bill",
+        "Por favor, verifique se todos os itens têm quantidade e preço unitário maiores que 0"
+      );
+      return;
+    }
+
     try {
       await insertSmartBill(editedData);
       console.log("Smart Bill added successfully");
-      console.log(editedData);
       navigation.navigate("Home" as never);
     } catch (error) {
       console.error("Erro ao inserir Smart Bill:", error);
@@ -116,16 +129,14 @@ export default function SettingUpSmartBill() {
   };
 
   return (
-    <View style={{ gap: 20, padding: 20, justifyContent: "center", flex: 1 }}>
+    <View style={styles.container}>
       <TopText first="configurar" third="Smart Bill" />
-
-      {!editedData && <ImagePreview imageUri={imageUri} loading={loading} />}
+      <View style={{ padding: 20 }}>
+        {!editedData && <ImagePreview imageUri={imageUri} loading={loading} />}
+      </View>
 
       {editedData && (
-        <ScrollView
-          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20 }}
-          keyboardShouldPersistTaps="handled"
-        >
+        <ScrollView keyboardShouldPersistTaps="handled">
           <ReviewPanel
             data={editedData}
             onFieldEdit={handleFieldEdit}
@@ -144,28 +155,29 @@ export default function SettingUpSmartBill() {
         onItemEdit={handleItemEdit}
         onItemEditFinish={handleItemEditFinish}
       />
-
-      {!editedData && (
-        <Button
-          title="Transformar em Smart Bill"
-          onPress={handleImageProcessing}
-          variant="primary"
-        />
-      )}
       <View style={{ gap: 10 }}>
-        {editedData?.items && (
+        {!editedData && (
           <Button
-            title="Adicionar Smart Bill"
-            onPress={handleSaveSmartBill}
+            title="Transformar em Smart Bill"
+            onPress={handleImageProcessing}
             variant="primary"
           />
         )}
+        <View style={{ gap: 10 }}>
+          {editedData?.items && (
+            <Button
+              title="Adicionar Smart Bill"
+              onPress={handleSaveSmartBill}
+              variant="primary"
+            />
+          )}
 
-        <Button
-          title="Voltar"
-          onPress={() => navigation.goBack()}
-          variant="secondary"
-        />
+          <Button
+            title="Adicionar Novamente"
+            onPress={() => navigation.goBack()}
+            variant="secondary"
+          />
+        </View>
       </View>
     </View>
   );

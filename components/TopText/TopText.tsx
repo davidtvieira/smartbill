@@ -20,6 +20,7 @@ interface TopTextProps {
 export default function TopText({
   first,
   second,
+  third,
   clickable = false,
   onClick,
 }: TopTextProps) {
@@ -34,19 +35,8 @@ export default function TopText({
   ];
 
   return (
-    <View
-      style={{
-        flexDirection: "column",
-        paddingVertical: 10,
-      }}
-    >
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
+    <View style={styles.mainContainer}>
+      <View style={styles.container}>
         <TouchableOpacity onPress={onClick} disabled={!clickable}>
           {truncatedFirst && (
             <Text style={firstTextStyle}>{truncatedFirst}</Text>
@@ -54,16 +44,7 @@ export default function TopText({
         </TouchableOpacity>
         {second && <Text style={styles.second}>{second}</Text>}
       </View>
-      <Text
-        style={{
-          textAlign: "center",
-          fontSize: 40,
-          color: "#FFFFFF",
-          fontWeight: "bold",
-        }}
-      >
-        Smart Bill
-      </Text>
+      <Text style={styles.third}>{third}</Text>
     </View>
   );
 }

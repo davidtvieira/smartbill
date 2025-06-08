@@ -3,7 +3,6 @@ import ItemButton from "@/components/Buttons/ItemButton/ItemButton";
 import DonutGraph from "@/components/DonutGraph/DonutGraph"; // Import DonutGraph
 import CalendarModal from "@/components/Modals/CalendarModal/CalendarModal";
 import ItemDetailsModal from "@/components/Modals/ItemDetailsModal/ItemDetailsModal";
-import SearchInput from "@/components/SearchInput/SearchInput";
 import TopText from "@/components/TopText/TopText";
 import {
   getCategories,
@@ -16,7 +15,13 @@ import {
 } from "@/services/database/queries";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import styles from "./styleFilterScreen";
 type BaseItem = {
   id: string | number;
@@ -59,6 +64,7 @@ export default function FilterScreen() {
     startDate: new Date(),
     endDate: new Date(),
   });
+  const [showSearchInput, setShowSearchInput] = useState(false);
 
   useEffect(() => {
     const start = new Date();
@@ -95,7 +101,7 @@ export default function FilterScreen() {
       totalSpent: (p) => p.unit_price * (p.quantity || 1),
       name: (p) => p.name,
       id: (p) => p.id,
-      renderSubtitle: (p) => `${p.category_name}`,
+      renderSubtitle: (p) => `${p.category_name} | ${p.subcategory_name}`,
     },
     categories: {
       fetchFn: () => getCategories(firstDay, lastDay),
@@ -242,7 +248,7 @@ export default function FilterScreen() {
   };
   if (error) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={styles.errorContainer}>
         <Text>{error}</Text>
       </View>
     );
@@ -250,7 +256,7 @@ export default function FilterScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={{ flex: 1 }}>
+      <View style={styles.container}>
         <View>
           <View>
             <TopText
@@ -265,12 +271,7 @@ export default function FilterScreen() {
                     "Produtos"
               }
               second={" na minha"}
-              third={
-                selectedOption === "subcategories" ||
-                selectedOption === "subcategory-products"
-                  ? ""
-                  : "Smart Bill"
-              }
+              third={"Smart Bill"}
               clickable={true}
               onClick={() => setShowDropdown(!showDropdown)}
             />
@@ -280,11 +281,11 @@ export default function FilterScreen() {
             <View style={styles.dropdown}>
               {options.map((option) => (
                 <TouchableOpacity
-                  style={styles.option}
+                  style={styles.dropdownOption}
                   key={option.value}
                   onPress={() => handleOptionSelect(option.value)}
                 >
-                  <Text style={styles.optionText}>{option.label}</Text>
+                  <Text style={styles.dropdownOptionText}>{option.label}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -303,15 +304,47 @@ export default function FilterScreen() {
             }))}
           size={250}
         />
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 16,
-          }}
-        >
-          <View>
+        <View style={styles.buttonsContainer}>
+          {showSearchInput ? (
+            <View style={styles.searchContainer}>
+              <TextInput
+                style={styles.searchInput}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                placeholder="Pesquisar..."
+                autoFocus
+              />
+              <TouchableOpacity
+                onPress={() => {
+                  setShowSearchInput(false);
+                  setSearchQuery("");
+                }}
+              >
+                <MaterialCommunityIcons name="close" size={24} color="white" />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View>
+              <Button
+                onPress={() => setShowSearchInput(true)}
+                icon={
+                  <MaterialCommunityIcons
+                    name="magnify"
+                    size={20}
+                    color="white"
+                  />
+                }
+              />
+            </View>
+          )}
+          <View style={styles.container}>
             <Button
+              variant="primary"
+              title={
+                dateRange.startDate.toLocaleDateString("pt-PT") +
+                " - " +
+                dateRange.endDate.toLocaleDateString("pt-PT")
+              }
               onPress={() => setShowCalendarModal(true)}
               icon={
                 <MaterialCommunityIcons
@@ -322,28 +355,13 @@ export default function FilterScreen() {
               }
             />
           </View>
-          <View style={{ flex: 1 }}>
-            <SearchInput
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              placeholder="Pesquisar..."
-            />
-          </View>
         </View>
 
-        <ScrollView style={{ flex: 1 }}>
+        <ScrollView style={styles.scrollView}>
           {loading ? (
-            <Text
-              style={{ color: "white", textAlign: "center", marginTop: 20 }}
-            >
-              Carregando...
-            </Text>
+            <Text style={styles.loadingText}>Carregando...</Text>
           ) : filteredItems.length === 0 ? (
-            <Text
-              style={{ color: "white", textAlign: "center", marginTop: 20 }}
-            >
-              Nenhum item encontrado
-            </Text>
+            <Text style={styles.noItemsText}>Nenhum item encontrado</Text>
           ) : (
             filteredItems.map((item) => (
               <ItemButton
@@ -352,7 +370,7 @@ export default function FilterScreen() {
                 subtitle={
                   dataMappers[selectedOption]?.renderSubtitle?.(item) || ""
                 }
-                value={`€${item.total_spent.toFixed(2)}`}
+                value={`${item.total_spent.toFixed(2)}€`}
                 onPress={() => handleItemPress(item)}
               />
             ))
@@ -375,10 +393,16 @@ export default function FilterScreen() {
 
       <CalendarModal
         visible={showCalendarModal}
-        onClose={() => {
+        onClose={() => setShowCalendarModal(false)}
+        onDateRangeSelected={(start, end) => {
+          setDateRange({
+            startDate: new Date(start),
+            endDate: new Date(end),
+          });
           setShowCalendarModal(false);
         }}
-        onDateRangeSelected={handleDateRangeSelected}
+        initialStartDate={dateRange.startDate.toISOString().split("T")[0]}
+        initialEndDate={dateRange.endDate.toISOString().split("T")[0]}
       />
     </View>
   );

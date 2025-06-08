@@ -1,3 +1,4 @@
+import { theme } from "@/theme/theme";
 import React from "react";
 import { Text, View } from "react-native";
 import PieChart from "react-native-pie-chart";
@@ -14,7 +15,7 @@ interface DonutGraphProps {
 const DonutGraph = ({ totalSpent, size, content }: DonutGraphProps) => {
   const generateColor = (
     index: number,
-    baseColor: string = "#F47A64"
+    baseColor: string = theme.button.color.primary
   ): string => {
     const hex = baseColor.replace("#", "");
     const factor = 1 - index * 0.035;
@@ -48,14 +49,17 @@ const DonutGraph = ({ totalSpent, size, content }: DonutGraphProps) => {
         {series.length === 0 && (
           <PieChart
             widthAndHeight={size}
-            series={[{ value: 1, color: "#F47A64" }]}
+            series={[
+              {
+                value: 1,
+                color: theme.button.color.primary,
+              },
+            ]}
             cover={0.6}
           />
         )}
         <View style={styles.numberContainer}>
-          <Text
-            style={{ fontSize: size / 10, fontWeight: "bold", color: "white" }}
-          >
+          <Text style={[styles.number, { fontSize: size / 10 }]}>
             {totalSpent.toFixed(2)}€
           </Text>
         </View>

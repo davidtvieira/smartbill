@@ -1,5 +1,5 @@
+import { theme } from "@/theme/theme";
 import { StyleSheet } from "react-native";
-
 export default StyleSheet.create({
   modalOverlay: {
     flex: 1,
@@ -9,8 +9,8 @@ export default StyleSheet.create({
   },
   modalContent: {
     width: "90%",
-    backgroundColor: "#273C47",
-    borderRadius: 10,
+    backgroundColor: theme.colors.primary,
+    borderRadius: theme.button.border.radius,
     padding: 20,
     maxHeight: "80%",
   },
@@ -21,9 +21,9 @@ export default StyleSheet.create({
     marginBottom: 15,
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: theme.button.text.Primarysize,
     fontWeight: "bold",
-    color: "#ffffff",
+    color: theme.button.text.color,
   },
   closeButton: {
     padding: 5,
@@ -42,17 +42,17 @@ export default StyleSheet.create({
     marginHorizontal: 5,
   },
   resetButton: {
-    backgroundColor: "white",
+    flex:1
   },
   applyButton: {
-    backgroundColor: "#F47A64",
+    backgroundColor: theme.button.color.primary,
   },
   resetButtonText: {
-
+    color: theme.button.text.color,
     fontWeight: "bold",
   },
   applyButtonText: {
-
+    color: theme.button.text.color,
     fontWeight: "bold",
   },
 });

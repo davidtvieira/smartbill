@@ -1,11 +1,13 @@
 import { initDB } from "@/services/database/db";
+import { theme } from "@/theme/theme";
 import {
   NavigationContainer,
   NavigationIndependentTree,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useFonts } from "expo-font";
 import { useEffect } from "react";
-import { StatusBar } from "react-native";
+import { ActivityIndicator, StatusBar } from "react-native";
 import AddSmartBill from "./screens/AddSmartBill/AddSmartBill/AddSmartBill";
 import SettingUpSmartBill from "./screens/AddSmartBill/SettingUpSmartBill/SettingUpSmartBill";
 import FilterScreen from "./screens/FilterScreen/FilterScreen";
@@ -13,9 +15,14 @@ import HomeScreen from "./screens/HomeScreen/HomeScreen";
 import SettingsScreen from "./screens/SettingsScreen/SettingsScreen";
 
 const Stack = createNativeStackNavigator();
-const backgroundColor = "#273C47";
+const backgroundColor = theme.colors.primary;
 
 export default function Index() {
+  const [fontsLoaded] = useFonts({
+    "Roboto_Condensed-Regular": require("../assets/Fonts/Roboto_Condensed-Regular.ttf"),
+    "Roboto_Condensed-Bold": require("../assets/Fonts/Roboto_Condensed-Bold.ttf"),
+  });
+
   useEffect(() => {
     const startDB = async () => {
       try {
@@ -26,6 +33,16 @@ export default function Index() {
     };
     startDB();
   }, []);
+
+  if (!fontsLoaded) {
+    return (
+      <ActivityIndicator
+        size="large"
+        color="#fff"
+        style={{ flex: 1, justifyContent: "center" }}
+      />
+    );
+  }
 
   return (
     <>

@@ -71,9 +71,11 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+      <View style={styles.settingsContainer}>
         <Button
-          title={"Definições"}
+          icon={
+            <MaterialCommunityIcons name="wrench" size={24} color="white" />
+          }
           onPress={() => navigation.navigate("SettingsScreen" as never)}
           variant="onlyText"
         />
@@ -83,7 +85,7 @@ export default function HomeScreen() {
         <TopText first="A minha" third="Smart Bill" />
       </View>
 
-      <View style={{ flex: 1 }}>
+      <View style={styles.container}>
         <DonutGraph
           totalSpent={categories.reduce(
             (acc, curr) => acc + curr.total_spent,
@@ -107,24 +109,8 @@ export default function HomeScreen() {
               variant="primary"
             />
 
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                width: "100%",
-                alignItems: "center",
-                paddingTop: 16,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 20,
-                  fontWeight: "bold",
-                  color: "white",
-                }}
-              >
-                Últimos 7 Dias
-              </Text>
+            <View style={styles.buttonsContainer}>
+              <Text style={styles.titleText}>Últimos 7 Dias</Text>
               <Button
                 title="Ver todos"
                 onPress={() => navigation.navigate("FilterScreen" as never)}
@@ -139,12 +125,10 @@ export default function HomeScreen() {
           contentContainerStyle={styles.listContent}
         >
           {loading ? (
-            <Text style={{ color: "white", textAlign: "center" }}>
-              Carregando...
-            </Text>
+            <Text style={styles.loadingText}>Carregando...</Text>
           ) : categories.length === 0 ? (
-            <View style={{ paddingTop: 16 }}>
-              <Text style={{ color: "white", textAlign: "center" }}>
+            <View style={styles.noItemsContainer}>
+              <Text style={styles.noItemsText}>
                 Nenhuma categoria encontrada
               </Text>
             </View>
@@ -160,7 +144,7 @@ export default function HomeScreen() {
                       }`
                     : "Sem subcategorias"
                 }
-                value={`€${item.total_spent.toFixed(2)}`}
+                value={`${item.total_spent.toFixed(2)}€`}
                 onPress={() => console.log(item)}
               />
             ))

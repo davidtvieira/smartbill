@@ -1,5 +1,5 @@
+import { theme } from '@/theme/theme';
 import { StyleSheet } from 'react-native';
-
 export default StyleSheet.create({
   container: {
     width: '100%',
@@ -9,24 +9,25 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#2C4450',
+    backgroundColor: theme.button.color.secondary,
     padding: 15,
-    borderRadius: 8,
+    borderRadius: theme.button.border.radius,
   },
 
   title: {
-    fontWeight: 'bold',
-    fontSize: 18,
-    color: 'white',
+    fontFamily: theme.fonts.bold,
+    fontSize: theme.button.text.medium,
+    color: theme.button.text.color,
 
   },
   subtitle: {
-    fontSize: 14,
-    color: 'white',
+    fontSize: theme.button.text.medium,
+    fontFamily: theme.fonts.primary,
+    color: theme.button.text.color,
   },    
   value: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'white',
+    fontSize: theme.button.text.large,  
+    fontFamily: theme.fonts.bold,
+    color: theme.button.text.color,
   },
 });

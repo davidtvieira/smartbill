@@ -1,9 +1,10 @@
 import Button from "@/components/Buttons/Button/Button";
 import TopText from "@/components/TopText/TopText";
+import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Linking, Text, TextInput, TouchableOpacity, View } from "react-native";
 import styles from "./styleSettingScreen";
 
 const MODEL_OPTIONS = [
@@ -80,15 +81,17 @@ export default function SettingsScreen() {
 
   return (
     <View style={styles.container}>
-      <TopText first="Definições" />
+      <TopText first="Definições" second="na minha" third="Smart Bill" />
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Modelo de IA</Text>
-        <View style={{ position: "relative" }}>
+        <View>
           <TouchableOpacity
             style={styles.dropdownButton}
             onPress={() => setShowModelDropdown(!showModelDropdown)}
           >
-            <Text>{getModelDisplayName(selectedModel)}</Text>
+            <Text style={styles.dropdownButtonText}>
+              {getModelDisplayName(selectedModel)}
+            </Text>
           </TouchableOpacity>
 
           {showModelDropdown && (
@@ -109,7 +112,23 @@ export default function SettingsScreen() {
           )}
         </View>
 
-        <Text style={styles.label}>Chave da API</Text>
+        <View style={styles.apiKeyContainer}>
+          <Text style={styles.label}>Chave da API</Text>
+          <TouchableOpacity
+            onPress={() =>
+              Linking.openURL(
+                "https://ai.google.dev/gemini-api/docs/get-started/tutorial?lang=web&hl=pt"
+              )
+            }
+          >
+            <MaterialIcons
+              name="help-outline"
+              style={styles.label}
+              size={20}
+              color="#666"
+            />
+          </TouchableOpacity>
+        </View>
         <TextInput
           style={styles.input}
           value={apiKey}

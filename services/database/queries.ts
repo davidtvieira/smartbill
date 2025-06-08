@@ -219,12 +219,16 @@ export const getProductsBySubcategory = async (
       SELECT 
         p.*,
         sb.purchase_date,
+        sb.purchase_time,
         e.name as establishment_name,
-        c.name as category_name
+        e.location as establishment_location,
+        c.name as category_name,
+        s.name as subcategory_name
       FROM Product p
       JOIN SmartBill sb ON p.bill_id = sb.id
       JOIN Establishment e ON sb.establishment_id = e.id
       JOIN Category c ON p.category_id = c.id
+      JOIN Subcategory s ON p.subcategory_id = s.id
       WHERE p.subcategory_id = ?
         AND sb.purchase_date BETWEEN ? AND ?
       ORDER BY sb.purchase_date DESC, p.name ASC

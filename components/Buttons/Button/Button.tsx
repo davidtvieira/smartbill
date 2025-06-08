@@ -6,7 +6,7 @@ import styles from "./styleButton";
 interface ButtonProps {
   title?: string;
   onPress: () => void;
-  variant?: "primary" | "secondary" | "alternative" | "onlyText" | "danger";
+  variant?: "primary" | "secondary" | "onlyText" | "danger";
   disabled?: boolean;
   icon?: ReactNode;
 }
@@ -21,7 +21,6 @@ export default function Button({
   const variantStyles = {
     primary: styles.primary,
     secondary: styles.secondary,
-    alternative: styles.alternative,
     onlyText: styles.onlyText,
     danger: styles.danger,
   };
@@ -37,13 +36,7 @@ export default function Button({
       activeOpacity={disabled ? 1 : 0.7}
       disabled={disabled}
     >
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
+      <View style={styles.container}>
         {icon && <View style={styles.iconContainer}>{icon}</View>}
         {title && <Text style={styles.text}>{title}</Text>}
       </View>

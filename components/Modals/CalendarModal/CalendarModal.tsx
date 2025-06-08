@@ -1,5 +1,6 @@
 import Button from "@/components/Buttons/Button/Button";
 import { getAllSmartBills } from "@/services/database/queries";
+import { theme } from "@/theme/theme";
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
@@ -10,12 +11,16 @@ type CalendarModalProps = {
   visible: boolean;
   onClose: () => void;
   onDateRangeSelected: (startDate: string, endDate: string) => void;
+  initialStartDate?: string;
+  initialEndDate?: string;
 };
 
 export default function CalendarModal({
   visible,
   onClose,
   onDateRangeSelected,
+  initialStartDate,
+  initialEndDate,
 }: CalendarModalProps) {
   const [selectedDates, setSelectedDates] = React.useState<{
     [key: string]: {
@@ -28,8 +33,12 @@ export default function CalendarModal({
       dotColor?: string;
     };
   }>({});
-  const [startDate, setStartDate] = React.useState<string | null>(null);
-  const [endDate, setEndDate] = React.useState<string | null>(null);
+  const [startDate, setStartDate] = React.useState<string | null>(
+    initialStartDate || null
+  );
+  const [endDate, setEndDate] = React.useState<string | null>(
+    initialEndDate || null
+  );
   const [billDates, setBillDates] = useState<{ [key: string]: any }>({});
 
   useEffect(() => {
@@ -39,7 +48,6 @@ export default function CalendarModal({
         const dates: { [key: string]: any } = {};
 
         bills.forEach((bill) => {
-          // Use the purchase_date as the key
           const date = bill.purchase_date;
           if (date) {
             dates[date] = {
@@ -51,6 +59,29 @@ export default function CalendarModal({
         });
 
         setBillDates(dates);
+
+        // Initialize selected dates with initial range if provided
+        const initialDates = { ...dates };
+        if (initialStartDate && initialEndDate) {
+          const start = new Date(initialStartDate);
+          const end = new Date(initialEndDate);
+          const current = new Date(start);
+
+          while (current <= end) {
+            const currentDate = current.toISOString().split("T")[0];
+            initialDates[currentDate] = {
+              ...initialDates[currentDate],
+              selected: true,
+              color: "#F47A64",
+              textColor: "white",
+              startingDay: currentDate === initialStartDate,
+              endingDay: currentDate === initialEndDate,
+            };
+            current.setDate(current.getDate() + 1);
+          }
+        }
+
+        setSelectedDates(initialDates);
       } catch (error) {
         console.error("Error fetching SmartBills:", error);
       }
@@ -59,7 +90,7 @@ export default function CalendarModal({
     if (visible) {
       fetchBills();
     }
-  }, [visible]);
+  }, [visible, initialStartDate, initialEndDate]);
 
   const handleDayPress = (day: DateData) => {
     const date = day.dateString;
@@ -152,28 +183,30 @@ export default function CalendarModal({
             markedDates={selectedDates}
             markingType="period"
             theme={{
-              calendarBackground: "#273C47",
-              textSectionTitleColor: "#ffffff",
-              selectedDayBackgroundColor: "#F47A64",
-              selectedDayTextColor: "#ffffff",
-              todayTextColor: "#F47A64",
-              dayTextColor: "#ffffff",
-              textDisabledColor: "#666666",
-              dotColor: "#F47A64",
-              selectedDotColor: "#ffffff",
-              arrowColor: "#F47A64",
-              monthTextColor: "#F47A64",
-              textMonthFontWeight: "bold",
-              textDayFontSize: 16,
-              textMonthFontSize: 18,
-              textDayHeaderFontSize: 14,
-              textDayFontWeight: "500",
-              textDayHeaderFontWeight: "400",
+              calendarBackground: theme.colors.primary,
+              textSectionTitleColor: theme.button.text.color,
+              textSectionTitleFontFamily: theme.fonts.bold,
+              textSectionTitleFontSize: theme.button.text.large,
+              selectedDayBackgroundColor: theme.button.color.primary,
+              selectedDayTextColor: theme.button.text.color,
+              todayTextColor: theme.button.color.primary,
+              dayTextColor: theme.button.text.color,
+              textDisabledColor: theme.button.text.color,
+              dotColor: theme.button.color.primary,
+              selectedDotColor: theme.button.text.color,
+              arrowColor: theme.button.color.primary,
+              monthTextColor: theme.button.color.primary,
+              textMonthFontFamily: theme.fonts.bold,
+              textDayFontSize: theme.button.text.medium,
+              textMonthFontSize: theme.button.text.large,
+              textDayHeaderFontSize: theme.button.text.medium,
+              textDayFontFamily: theme.fonts.primary,
+              textDayHeaderFontFamily: theme.fonts.bold,
             }}
           />
 
           <View style={styles.buttonContainer}>
-            <View style={{ flex: 1 }}>
+            <View style={styles.resetButton}>
               <Button
                 title="Redefinir"
                 onPress={handleReset}
@@ -181,12 +214,7 @@ export default function CalendarModal({
               />
             </View>
             <View style={{ flex: 1 }}>
-              <Button
-                title="Aplicar"
-                onPress={handleApply}
-                variant="primary"
-                disabled={!startDate}
-              />
+              <Button title="Aplicar" onPress={handleApply} variant="primary" />
             </View>
           </View>
         </View>

@@ -3,6 +3,7 @@ import {
   deleteSmartBill,
   getProductsBySmartBill,
 } from "@/services/database/queries";
+import { MaterialIcons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { Alert, Modal, ScrollView, Text, View } from "react-native";
 import styles from "./styleItemDetailsModal";
@@ -93,38 +94,76 @@ export default function ItemDetailsModal({
             selectedItem && (
               <View>
                 <Text style={styles.modalTitle}>{selectedItem.name}</Text>
-                <Text style={styles.modalText}>
-                  {selectedItem.category_name} -{" "}
-                  {selectedItem.subcategory_name || "Sem subcategoria"}
-                </Text>
-                <Text style={styles.modalText}>
-                  Preço Unitário: {selectedItem.unit_price}€
-                </Text>
                 {selectedItem.establishment_name && (
-                  <Text style={styles.modalText}>
-                    Estabelecimento: {selectedItem.establishment_name}
-                  </Text>
+                  <View style={styles.container}>
+                    <Text style={styles.modalText}>Estabelecimento:</Text>
+                    <Text style={styles.modalTextInfo}>
+                      {selectedItem.establishment_name}
+                    </Text>
+                  </View>
+                )}
+                {selectedItem.category_name && (
+                  <View style={styles.container}>
+                    <Text style={styles.modalText}>Categoria:</Text>
+                    <Text style={styles.modalTextInfo}>
+                      {selectedItem.category_name}
+                    </Text>
+                  </View>
+                )}
+
+                {selectedItem.subcategory_name && (
+                  <View style={styles.container}>
+                    <Text style={styles.modalText}>Subcategoria:</Text>
+                    <Text style={styles.modalTextInfo}>
+                      {selectedItem.subcategory_name || "Sem subcategoria"}
+                    </Text>
+                  </View>
+                )}
+                {selectedItem.unit_price && (
+                  <View style={styles.container}>
+                    <Text style={styles.modalText}>Preço Unitário:</Text>
+                    <Text style={styles.modalTextInfo}>
+                      {selectedItem.unit_price}€
+                    </Text>
+                  </View>
                 )}
                 {selectedItem.establishment_location && (
-                  <Text style={styles.modalText}>
-                    Localização: {selectedItem.establishment_location}
-                  </Text>
+                  <View style={styles.container}>
+                    <Text style={styles.modalText}>Localização:</Text>
+                    <Text style={styles.modalTextInfo}>
+                      {selectedItem.establishment_location}
+                    </Text>
+                  </View>
                 )}
                 {selectedItem.purchase_date && (
-                  <Text style={styles.modalText}>
-                    Data: {selectedItem.purchase_date}
-                  </Text>
+                  <View style={styles.container}>
+                    <Text style={styles.modalText}>Data:</Text>
+                    <Text style={styles.modalTextInfo}>
+                      {selectedItem.purchase_date}
+                    </Text>
+                  </View>
+                )}
+                {selectedItem.purchase_time && (
+                  <View style={styles.container}>
+                    <Text style={styles.modalText}>Hora:</Text>
+                    <Text style={styles.modalTextInfo}>
+                      {selectedItem.purchase_time}
+                    </Text>
+                  </View>
                 )}
               </View>
             )}
 
           {selectedOption === "smartbills" && selectedItem && (
             <ScrollView>
-              <View style={{ paddingBottom: 16 }}>
+              <View>
                 <View>
-                  <Text style={styles.modalTitle}>
-                    {selectedItem.name} - {selectedItem.establishment_location}
-                  </Text>
+                  <View style={styles.container}>
+                    <Text style={styles.modalTitle}>
+                      {selectedItem.name} -{" "}
+                      {selectedItem.establishment_location}
+                    </Text>
+                  </View>
                   <Text style={styles.modalText}>
                     Data: {selectedItem.purchase_date}
                   </Text>
@@ -162,27 +201,38 @@ export default function ItemDetailsModal({
               ))}
             </ScrollView>
           )}
-          <View style={{ gap: 16, paddingTop: 16 }}>
+          <View style={styles.buttonContainer}>
             {selectedOption === "smartbills" && (
-              <Button onPress={handleDelete} variant="danger" title="Apagar" />
+              <Button
+                onPress={handleDelete}
+                icon={<MaterialIcons name="delete" size={20} color="white" />}
+                variant="danger"
+                title="Apagar"
+              />
             )}
             <Button onPress={onClose} variant="secondary" title="Fechar" />
           </View>
 
           {showDeleteConfirmation && (
-            <View style={styles.confirmationOverlay}>
-              <View style={styles.confirmationDialog}>
-                <Text style={styles.confirmationTitle}>Confirmar Exclusão</Text>
-                <Text style={styles.confirmationText}>
-                  Tem a certeza que deseja apagar esta fatura? Esta ação não
+            <View style={styles.overlay}>
+              <View style={styles.dialog}>
+                <View style={styles.dialogTitle}>
+                  <MaterialIcons name="warning" size={20} color="white" />
+                  <Text style={styles.title}>Confirmar Exclusão</Text>
+                </View>
+                <Text style={styles.text}>
+                  Tens a certeza que deseja apagar esta fatura? Esta ação não
                   pode ser desfeita.
                 </Text>
-                <View style={styles.confirmationButtons}>
+                <View style={styles.buttonContainer}>
                   <View style={{ flex: 1 }}>
                     <Button
                       onPress={confirmDelete}
+                      icon={
+                        <MaterialIcons name="delete" size={20} color="white" />
+                      }
                       variant="danger"
-                      title="Apagar"
+                      title="Sim"
                     />
                   </View>
                   <View style={{ flex: 1 }}>

@@ -1,6 +1,7 @@
 import { SmartBillData } from "@/app/screens/AddSmartBill/SettingUpSmartBill/SettingUpSmartBill";
 import Button from "@/components/Buttons/Button/Button";
 import React, { useEffect, useState } from "react";
+import { Alert } from "react-native";
 import styles from "./styleEditingModal";
 
 import {
@@ -40,7 +41,9 @@ const EditingModal: React.FC<{
   onItemEdit,
   onItemEditFinish,
 }) => {
-  const [tempValue, setTempValue] = useState<string>("");
+  const [tempValue, setTempValue] = useState<string>(
+    editedData?.[editingField as keyof SmartBillData]?.toString() || ""
+  );
   const [tempItem, setTempItem] = useState<ReceiptItem>({
     name: "",
     quantity: 0,
@@ -85,13 +88,74 @@ const EditingModal: React.FC<{
     }
   }, [visible, editingField, isItemEditing, itemIndex, editedData]);
 
+  const formatDate = (input: string) => {
+    const numbers = input.replace(/\D/g, "");
+    let formatted = numbers.slice(0, 2);
+    if (numbers.length > 2) {
+      formatted += "-" + numbers.slice(2, 4);
+    }
+    if (numbers.length > 4) {
+      formatted += "-" + numbers.slice(4, 8);
+    }
+    return formatted;
+  };
+
+  const formatTime = (input: string) => {
+    const numbers = input.replace(/\D/g, "");
+    let formatted = numbers.slice(0, 2);
+    if (numbers.length > 2) {
+      formatted += ":" + numbers.slice(2, 4);
+    }
+    return formatted;
+  };
+
+  const handleInputChange = (text: string, field: string) => {
+    if (field === "date") {
+      setTempValue(formatDate(text));
+    } else if (field === "time") {
+      setTempValue(formatTime(text));
+    } else {
+      setTempValue(text);
+    }
+  };
+
   const handleClose = () => {
+    setTempValue("");
+    setTempItem({
+      name: "",
+      quantity: 1,
+      unit_price: 0,
+      category: "",
+      sub_category: "",
+    });
     Keyboard.dismiss();
     onClose();
     onItemEditFinish();
   };
 
   const handleUpdate = () => {
+    if (editingField === "date" && tempValue) {
+      const dateRegex = /^\d{2}-\d{2}-\d{4}$/;
+      if (!dateRegex.test(tempValue)) {
+        Alert.alert(
+          "Formato inválido",
+          "Por favor, insira a data no formato DD-MM-AAAA"
+        );
+        return;
+      }
+    }
+
+    if (editingField === "time" && tempValue) {
+      const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+      if (!timeRegex.test(tempValue)) {
+        Alert.alert(
+          "Formato inválido",
+          "Por favor, insira a hora no formato HH:MM"
+        );
+        return;
+      }
+    }
+
     if (isItemEditing && itemIndex !== null) {
       onItemEdit(itemIndex, "name", tempItem.name);
       onItemEdit(itemIndex, "quantity", String(tempItem.quantity));
@@ -113,32 +177,42 @@ const EditingModal: React.FC<{
       onRequestClose={handleClose}
     >
       <TouchableWithoutFeedback onPress={handleClose}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-          }}
-        >
-          <Pressable
-            onPress={(e) => e.stopPropagation()}
-            style={{
-              width: 300,
-              padding: 20,
-              backgroundColor: "#273C47",
-              borderRadius: 12,
-            }}
-          >
+        <View style={styles.container}>
+          <Pressable onPress={(e) => e.stopPropagation()} style={styles.button}>
             {!isItemEditing && editingField && (
               <>
-                <Text style={styles.label}>{editingField}</Text>
+                <Text style={styles.label}>
+                  {editingField === "local" && "Local"}
+                  {editingField === "establishment" && "Estabelecimento"}
+                  {editingField === "date" && "Data"}
+                  {editingField === "time" && "Hora"}
+                </Text>
                 <TextInput
                   value={tempValue}
-                  onChangeText={setTempValue}
-                  placeholder={editingField}
+                  onChangeText={(text) => handleInputChange(text, editingField)}
+                  placeholder={
+                    editingField === "local"
+                      ? "Ex: Continente de Lisboa"
+                      : editingField === "establishment"
+                      ? "Ex: Continente"
+                      : editingField === "date"
+                      ? "DD-MM-AAAA"
+                      : "HH:MM"
+                  }
                   placeholderTextColor="#a0a0a0"
                   style={styles.input}
+                  keyboardType={
+                    editingField === "date" || editingField === "time"
+                      ? "numeric"
+                      : "default"
+                  }
+                  maxLength={
+                    editingField === "date"
+                      ? 10
+                      : editingField === "time"
+                      ? 5
+                      : undefined
+                  }
                 />
               </>
             )}

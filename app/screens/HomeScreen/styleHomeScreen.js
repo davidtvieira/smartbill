@@ -1,30 +1,9 @@
+import { theme } from "@/theme/theme";
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-  },
-  apiKeyMessage: {
-    margin: 20,
-    padding: 15,
-    backgroundColor: '#fff3cd',
-    borderLeftWidth: 4,
-    borderLeftColor: '#ffc107',
-    borderRadius: 4,
-  },
-  apiKeyText: {
-    color: '#856404',
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  buttonWrapper: {
-    flex: 1,
-  },
-  emptyText: {
-    color: "#666",
-    textAlign: "center",
-    marginTop: 20,
   },
   listContainer: {
     flex: 1,
@@ -40,22 +19,36 @@ export default StyleSheet.create({
     gap: 10,
     justifyContent: "space-between",
   },
-  productItem: {
-    backgroundColor: "#f8f9fa",
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: "#e9ecef",
-  },
-  productName: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 5,
-  },
   error: {
-    color: "#dc3545",
+    color: theme.colors.text,
     textAlign: "center",
     marginTop: 20,
   },
+  buttonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    alignItems: "center",
+    paddingTop: 16,
+  },
+  titleText: {
+    fontSize: theme.button.text.large,
+    color: theme.colors.text,
+    fontFamily: theme.fonts.bold,
+  },
+  loadingText: {
+    color: theme.colors.text,
+    textAlign: "center",
+  },
+  noItemsContainer: {
+    paddingTop: 16,
+  },
+  noItemsText: {
+    color: theme.colors.text,
+    textAlign: "center",
+  },
+  settingsContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+  }
 });

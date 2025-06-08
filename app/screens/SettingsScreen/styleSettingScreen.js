@@ -1,3 +1,4 @@
+import { theme } from "@/theme/theme";
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
@@ -9,23 +10,25 @@ export default StyleSheet.create({
     marginTop: 20,
   },
   label: {
-    fontSize: 16,
+    fontSize: theme.button.text.large,
     marginBottom: 8,
-    fontWeight: "500",
-    color: "white",
+    fontFamily: theme.fonts.bold,
+    color: theme.colors.text,
   },
   input: {
     maxHeight: 40,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 15,
-paddingLeft: 10,
-    fontSize: 16,
-    color: "white",
+    paddingLeft: 10,
+    fontSize: theme.button.text.medium,
+    fontFamily: theme.fonts.primary,
+    color: theme.colors.text,
     marginBottom: 16,
   },
   helperText: {
-    fontSize: 12,
+    fontSize: theme.button.text.medium,
+    fontFamily: theme.fonts.primary,
     color: "gray",
     marginTop: 4,
     marginBottom: 16,
@@ -41,7 +44,8 @@ paddingLeft: 10,
   messageText: {
     marginTop: 8,
     marginBottom: 8,
-    fontSize: 14,
+    fontSize: theme.button.text.medium,
+    fontFamily: theme.fonts.primary,
     textAlign: "center",
   },
   successText: {
@@ -55,6 +59,13 @@ paddingLeft: 10,
     padding: 10,
     borderRadius: 8,
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+  dropdownButtonText: {
+    fontSize: theme.button.text.medium,
+    fontFamily: theme.fonts.primary,
+    color: theme.colors.textAltern,
   },
   dropdown: {
     position: "absolute",
@@ -69,10 +80,19 @@ paddingLeft: 10,
     padding: 12,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
+    fontFamily: theme.fonts.primary,
   },
   optionText: {
-    fontSize: 16,
-    color: "#333",
+    fontSize: theme.button.text.medium,
+    fontFamily: theme.fonts.primary,
+    color: theme.colors.textAltern,
     textAlign: "center",
+  },
+  apiKeyContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignContent: "center",
+    gap: 8,
+    marginBottom: 8,
   },
 });

@@ -1,37 +1,40 @@
+import { theme } from "@/theme/theme";
 import { StyleSheet } from "react-native";
-
 export default StyleSheet.create({
   button: {
-    borderRadius: 15,
+    borderRadius: theme.button.border.radius,
+    padding: 10,
+    
+  },
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
   },
   iconContainer: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 10,
   },
   text: {
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: theme.button.text.medium,
+    color: theme.button.text.color,
+    fontFamily: theme.fonts.bold,
     textAlign: "center",
-    padding: 10,
-    color: "#F4F4F4F4",
   },
   primary: {
-    backgroundColor: "#F47A64",
+    backgroundColor: theme.button.color.primary,
   },
   secondary: {
-    backgroundColor: "#2C4450",
-  },
-  alternative: {
-    backgroundColor: "#E1FFF9",
+    backgroundColor: theme.button.color.secondary,
   },
   disabled : {
-    opacity: 0.5
+    opacity: theme.button.color.disabled
   },
   onlyText: {
-    backgroundColor: "transparent",
+    backgroundColor: theme.button.color.onlytext,
   },
   danger: {
-    backgroundColor: "#FF586D",
+    backgroundColor: theme.button.color.danger,
   },
 });

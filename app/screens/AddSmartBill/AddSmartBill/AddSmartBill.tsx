@@ -1,8 +1,9 @@
-import Button from "@/components/Buttons/Button/Button";
 import ImagePickerMenu from "@/components/Buttons/ImagePicker/ImagePickerMenu";
 import TopText from "@/components/TopText/TopText";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
+import styles from "./styleAddSmartBill";
+
 export default function ImagePicker() {
   const navigation = useNavigation() as any;
 
@@ -11,21 +12,10 @@ export default function ImagePicker() {
   };
 
   return (
-    <View
-      style={{
-        justifyContent: "center",
-        flex: 1,
-      }}
-    >
+    <View style={styles.container}>
       <TopText first="adicionar nova" third="Smart Bill" />
       <ImagePickerMenu onImagePicked={handleImagePick} />
-      <View style={{ paddingTop: 20 }}>
-        <Button
-          title="Voltar"
-          onPress={() => navigation.goBack()}
-          variant="secondary"
-        />
-      </View>
+      <View style={{ paddingTop: 20 }}></View>
     </View>
   );
 }

@@ -38,7 +38,7 @@ export default function ImagePickerMenu({
   };
 
   return (
-    <View style={styles.imagepickermenu}>
+    <View style={styles.imagePickerMenu}>
       <Button title="Tirar uma foto" onPress={takePhoto} />
       <Button title="Escolhe uma imagem da galeria" onPress={pickImage} />
     </View>

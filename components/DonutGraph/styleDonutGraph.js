@@ -1,5 +1,5 @@
+import { theme } from "@/theme/theme";
 import { StyleSheet } from "react-native";
-
 
 export default StyleSheet.create({
     container: {
@@ -16,6 +16,10 @@ export default StyleSheet.create({
       position: "absolute",
       alignItems: "center",
       justifyContent: "center",
+    },
+    number: {
+      fontFamily: theme.fonts.bold,
+      color: theme.colors.text,
     },
   });
   
