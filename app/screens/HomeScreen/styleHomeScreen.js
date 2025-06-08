@@ -22,6 +22,8 @@ export default StyleSheet.create({
   error: {
     color: theme.colors.text,
     textAlign: "center",
+    fontSize: theme.text.medium,
+    fontFamily: theme.fonts.primary,
     marginTop: 20,
   },
   buttonsContainer: {
@@ -39,16 +41,32 @@ export default StyleSheet.create({
   loadingText: {
     color: theme.colors.text,
     textAlign: "center",
+    fontSize: theme.text.medium,
+    fontFamily: theme.fonts.primary,
   },
   noItemsContainer: {
     paddingTop: 16,
   },
   noItemsText: {
     color: theme.colors.text,
+    fontSize: theme.text.medium,
+    fontFamily: theme.fonts.primary,
     textAlign: "center",
   },
   settingsContainer: {
     flexDirection: "row",
     justifyContent: "flex-end",
-  }
+  },
+  apiKeyMessage: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 8,
+    color: "gray",
+    textAlign: "center",
+    fontSize: theme.text.medium,
+    fontFamily: theme.fonts.primary
+  },
+  infoIcon: {
+    marginRight: 4,
+  },
 });

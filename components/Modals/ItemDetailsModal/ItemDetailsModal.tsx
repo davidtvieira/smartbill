@@ -119,11 +119,30 @@ export default function ItemDetailsModal({
                     </Text>
                   </View>
                 )}
+                {selectedItem.quantity && (
+                  <View style={styles.container}>
+                    <Text style={styles.modalText}>Quantidade:</Text>
+                    <Text style={styles.modalTextInfo}>
+                      {selectedItem.quantity}
+                    </Text>
+                  </View>
+                )}
                 {selectedItem.unit_price && (
                   <View style={styles.container}>
                     <Text style={styles.modalText}>Preço Unitário:</Text>
                     <Text style={styles.modalTextInfo}>
                       {selectedItem.unit_price}€
+                    </Text>
+                  </View>
+                )}
+                {selectedItem.total_spent && (
+                  <View style={styles.container}>
+                    <Text style={styles.modalText}>Preço Total:</Text>
+                    <Text style={styles.modalTextInfo}>
+                      {(
+                        selectedItem.unit_price * selectedItem.quantity
+                      ).toFixed(2)}
+                      €
                     </Text>
                   </View>
                 )}
@@ -156,49 +175,98 @@ export default function ItemDetailsModal({
 
           {selectedOption === "smartbills" && selectedItem && (
             <ScrollView>
-              <View>
+              <View style={{ paddingBottom: 20 }}>
                 <View>
-                  <View style={styles.container}>
-                    <Text style={styles.modalTitle}>
-                      {selectedItem.name} -{" "}
-                      {selectedItem.establishment_location}
-                    </Text>
-                  </View>
-                  <Text style={styles.modalText}>
-                    Data: {selectedItem.purchase_date}
-                  </Text>
-                  <Text style={styles.modalText}>
-                    Hora: {selectedItem.purchase_time}
-                  </Text>
+                  <Text style={styles.modalTitle}>{selectedItem.name}</Text>
+                  {selectedItem.establishment_name && (
+                    <View style={styles.container}>
+                      <Text style={styles.modalText}>Estabelecimento:</Text>
+                      <Text style={styles.modalTextInfo}>
+                        {selectedItem.establishment_name}
+                      </Text>
+                    </View>
+                  )}
+                  {selectedItem.establishment_location && (
+                    <View style={styles.container}>
+                      <Text style={styles.modalText}>Localização:</Text>
+                      <Text style={styles.modalTextInfo}>
+                        {selectedItem.establishment_location}
+                      </Text>
+                    </View>
+                  )}
+                  {selectedItem.purchase_date && (
+                    <View style={styles.container}>
+                      <Text style={styles.modalText}>Data:</Text>
+                      <Text style={styles.modalTextInfo}>
+                        {selectedItem.purchase_date}
+                      </Text>
+                    </View>
+                  )}
+                  {selectedItem.purchase_time && (
+                    <View style={styles.container}>
+                      <Text style={styles.modalText}>Hora:</Text>
+                      <Text style={styles.modalTextInfo}>
+                        {selectedItem.purchase_time}
+                      </Text>
+                    </View>
+                  )}
+                  {selectedItem.item_count && (
+                    <View style={styles.container}>
+                      <Text style={styles.modalText}>Produtos:</Text>
+                      <Text style={styles.modalTextInfo}>
+                        {selectedItem.item_count}
+                      </Text>
+                    </View>
+                  )}
+                  {selectedItem.amount && (
+                    <View style={styles.container}>
+                      <Text style={styles.modalText}>Total:</Text>
+                      <Text style={styles.modalTextInfo}>
+                        {selectedItem.amount}€
+                      </Text>
+                    </View>
+                  )}
                 </View>
-
-                <Text style={styles.modalText}>
-                  Produtos: {selectedItem.item_count}
-                </Text>
-                <Text style={styles.modalText}>
-                  Total: {selectedItem.amount}€
-                </Text>
               </View>
+              <View>
+                {products.map((product, index) => (
+                  <View style={{ paddingVertical: 10 }} key={index}>
+                    {index > 0 && <View />}
+                    <Text style={[styles.modalTitle]}>{product.name}</Text>
+                    <View style={styles.container}>
+                      <Text style={styles.modalText}>Categoria:</Text>
+                      <Text style={styles.modalTextInfo}>
+                        {product.category_name}
+                      </Text>
+                    </View>
+                    <View style={styles.container}>
+                      <Text style={styles.modalText}>Subcategoria:</Text>
+                      <Text style={styles.modalTextInfo}>
+                        {product.subcategory_name}
+                      </Text>
+                    </View>
+                    <View style={styles.container}>
+                      <Text style={styles.modalText}>Quantidade:</Text>
+                      <Text style={styles.modalTextInfo}>
+                        {product.quantity}
+                      </Text>
+                    </View>
+                    <View style={styles.container}>
+                      <Text style={styles.modalText}>Preço Unitário:</Text>
+                      <Text style={styles.modalTextInfo}>
+                        {product.unit_price}€
+                      </Text>
+                    </View>
 
-              {products.map((product, index) => (
-                <View key={index}>
-                  {index > 0 && <View style={styles.divider} />}
-                  <Text style={[styles.modalText, { fontWeight: "bold" }]}>
-                    {product.name}
-                  </Text>
-                  <Text style={styles.modalText}>
-                    {product.category_name} - {product.subcategory_name}
-                  </Text>
-
-                  <Text style={styles.modalText}>
-                    {product.quantity} x {product.unit_price}€
-                  </Text>
-
-                  <Text style={styles.modalText}>
-                    Total: {product.quantity * product.unit_price}€
-                  </Text>
-                </View>
-              ))}
+                    <View style={styles.container}>
+                      <Text style={styles.modalText}>Total:</Text>
+                      <Text style={styles.modalTextInfo}>
+                        {(product.quantity * product.unit_price).toFixed(2)}€
+                      </Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
             </ScrollView>
           )}
           <View style={styles.buttonContainer}>
@@ -214,32 +282,34 @@ export default function ItemDetailsModal({
           </View>
 
           {showDeleteConfirmation && (
-            <View style={styles.overlay}>
-              <View style={styles.dialog}>
-                <View style={styles.dialogTitle}>
-                  <MaterialIcons name="warning" size={20} color="white" />
-                  <Text style={styles.title}>Confirmar Exclusão</Text>
+            <View style={styles.confirmationOverlay}>
+              <View style={styles.confirmationDialog}>
+                <View style={styles.confirmationHeader}>
+                  <MaterialIcons name="warning" size={24} color="white" />
+                  <Text style={styles.confirmationTitle}>
+                    Confirmar Exclusão
+                  </Text>
                 </View>
-                <Text style={styles.text}>
+                <Text style={styles.confirmationMessage}>
                   Tens a certeza que deseja apagar esta fatura? Esta ação não
                   pode ser desfeita.
                 </Text>
-                <View style={styles.buttonContainer}>
-                  <View style={{ flex: 1 }}>
-                    <Button
-                      onPress={confirmDelete}
-                      icon={
-                        <MaterialIcons name="delete" size={20} color="white" />
-                      }
-                      variant="danger"
-                      title="Sim"
-                    />
-                  </View>
-                  <View style={{ flex: 1 }}>
+                <View style={styles.confirmationButtons}>
+                  <View style={styles.confirmationButtonWrapper}>
                     <Button
                       onPress={cancelDelete}
                       variant="secondary"
                       title="Cancelar"
+                    />
+                  </View>
+                  <View style={styles.confirmationButtonWrapper}>
+                    <Button
+                      onPress={confirmDelete}
+                      variant="danger"
+                      title="Sim, Apagar"
+                      icon={
+                        <MaterialIcons name="delete" size={20} color="white" />
+                      }
                     />
                   </View>
                 </View>

@@ -95,15 +95,21 @@ export default function SettingUpSmartBill() {
     if (!editedData) return;
     const updatedItems = [...editedData.items];
     if (field === "quantity" || field === "unit_price") {
-      const numericValue =
-        field === "quantity" ? parseInt(value) : parseFloat(value);
-      updatedItems[index][field] = isNaN(numericValue)
-        ? (0 as never)
-        : (numericValue as never);
+      if (value === "") {
+        updatedItems[index][field] = 0 as never;
+      } else {
+        const sanitizedValue = value.replace(",", ".");
+        const numericValue = Number(sanitizedValue);
+        updatedItems[index][field] = (
+          isNaN(numericValue) ? 0 : numericValue
+        ) as never;
+      }
     } else {
       updatedItems[index][field] = value as never;
     }
-    setEditedData({ ...editedData, items: updatedItems });
+    setEditedData((prevData) =>
+      prevData ? { ...prevData, items: updatedItems } : null
+    );
   };
 
   const handleItemEditStart = (index: number) => {

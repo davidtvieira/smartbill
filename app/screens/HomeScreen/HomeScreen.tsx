@@ -5,9 +5,10 @@ import DonutGraph from "@/components/DonutGraph/DonutGraph";
 import TopText from "@/components/TopText/TopText";
 import { getCategories } from "@/services/database/queries";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { useCallback, useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import { Alert, ScrollView, Text, View } from "react-native";
 import styles from "./styleHomeScreen";
 
 type BaseItem = {
@@ -26,6 +27,7 @@ export default function HomeScreen() {
   const [categories, setCategories] = useState<BaseItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [hasApiKey, setHasApiKey] = useState(false);
 
   const fetchData = useCallback(async () => {
     const today = new Date();
@@ -50,10 +52,25 @@ export default function HomeScreen() {
     }
   }, []);
 
+  const checkApiKey = useCallback(async () => {
+    try {
+      const apiKey = await AsyncStorage.getItem("geminiApiKey");
+      setHasApiKey(!!apiKey);
+    } catch (error) {
+      console.error("Error checking API key:", error);
+      setHasApiKey(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    checkApiKey();
+  }, [checkApiKey]);
+
   useFocusEffect(
     useCallback(() => {
       fetchData();
-    }, [fetchData])
+      checkApiKey();
+    }, [fetchData, checkApiKey])
   );
 
   const truncateName = (name: string, maxLength: number = 25) => {
@@ -105,10 +122,41 @@ export default function HomeScreen() {
                 <MaterialCommunityIcons name="camera" size={24} color="white" />
               }
               title="Smart Bill"
-              onPress={() => navigation.navigate("AddSmartBill" as never)}
-              variant="primary"
+              onPress={() => {
+                if (!hasApiKey) {
+                  Alert.alert(
+                    "Chave da API Necessária",
+                    "Para usar o Smart Bill, por favor adicione uma chave da API nas Configurações.",
+                    [
+                      {
+                        text: "Cancelar",
+                        style: "cancel",
+                      },
+                      {
+                        text: "Ir para Configurações",
+                        onPress: () =>
+                          navigation.navigate("SettingsScreen" as never),
+                      },
+                    ]
+                  );
+                  return;
+                }
+                navigation.navigate("AddSmartBill" as never);
+              }}
+              variant={hasApiKey ? "primary" : "secondary"}
+              disabled={!hasApiKey}
             />
-
+            {!hasApiKey && (
+              <Text style={styles.apiKeyMessage}>
+                <MaterialCommunityIcons
+                  name="alert"
+                  size={16}
+                  style={styles.infoIcon}
+                />{" "}
+                Adicione uma chave da API nas Configurações para começar a usar
+                a Smart Bill
+              </Text>
+            )}
             <View style={styles.buttonsContainer}>
               <Text style={styles.titleText}>Últimos 7 Dias</Text>
               <Button
@@ -145,7 +193,7 @@ export default function HomeScreen() {
                     : "Sem subcategorias"
                 }
                 value={`${item.total_spent.toFixed(2)}€`}
-                onPress={() => console.log(item)}
+                disabled
               />
             ))
           )}

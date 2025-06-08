@@ -51,6 +51,8 @@ const EditingModal: React.FC<{
     category: "",
     sub_category: "",
   });
+  const [quantityInput, setQuantityInput] = useState("");
+  const [unitPriceInput, setUnitPriceInput] = useState("");
 
   const itemIndex = editingField?.startsWith("item")
     ? parseInt(editingField.split("-")[1])
@@ -58,6 +60,8 @@ const EditingModal: React.FC<{
 
   useEffect(() => {
     if (!visible) {
+      setQuantityInput("");
+      setUnitPriceInput("");
       setTempValue("");
       setTempItem({
         name: "",
@@ -72,18 +76,14 @@ const EditingModal: React.FC<{
     if (!editedData) return;
 
     if (isItemEditing && itemIndex !== null) {
-      const item = editedData.items?.[itemIndex];
-      setTempItem(
-        item || {
-          name: "",
-          quantity: 0,
-          unit_price: 0,
-          category: "",
-          sub_category: "",
-        }
-      );
+      const item = editedData?.items?.[itemIndex];
+      if (item) {
+        setTempItem(item);
+        setQuantityInput(item.quantity?.toString() || "");
+        setUnitPriceInput(item.unit_price?.toString() || "");
+      }
     } else if (editingField && !isItemEditing) {
-      const value = editedData[editingField as keyof SmartBillData];
+      const value = editedData?.[editingField as keyof SmartBillData];
       setTempValue(typeof value === "string" ? value : String(value || ""));
     }
   }, [visible, editingField, isItemEditing, itemIndex, editedData]);
@@ -120,6 +120,8 @@ const EditingModal: React.FC<{
   };
 
   const handleClose = () => {
+    setQuantityInput("");
+    setUnitPriceInput("");
     setTempValue("");
     setTempItem({
       name: "",
@@ -158,8 +160,8 @@ const EditingModal: React.FC<{
 
     if (isItemEditing && itemIndex !== null) {
       onItemEdit(itemIndex, "name", tempItem.name);
-      onItemEdit(itemIndex, "quantity", String(tempItem.quantity));
-      onItemEdit(itemIndex, "unit_price", String(tempItem.unit_price));
+      onItemEdit(itemIndex, "quantity", quantityInput);
+      onItemEdit(itemIndex, "unit_price", unitPriceInput);
       onItemEdit(itemIndex, "category", tempItem.category);
       onItemEdit(itemIndex, "sub_category", tempItem.sub_category);
       onItemEditFinish();
@@ -232,31 +234,29 @@ const EditingModal: React.FC<{
 
                 <Text style={styles.label}>Quantidade</Text>
                 <TextInput
-                  value={String(tempItem.quantity)}
-                  onChangeText={(text) =>
-                    setTempItem((prev) => ({
-                      ...prev,
-                      quantity: parseInt(text) || 0,
-                    }))
-                  }
+                  value={quantityInput}
+                  onChangeText={(text) => {
+                    if (text === "" || /^\d*\.?\d*$/.test(text)) {
+                      setQuantityInput(text);
+                    }
+                  }}
                   placeholder="Quantidade"
                   placeholderTextColor="#a0a0a0"
-                  keyboardType="numeric"
+                  keyboardType="decimal-pad"
                   style={styles.input}
                 />
 
                 <Text style={styles.label}>Preço Unitário</Text>
                 <TextInput
-                  value={String(tempItem.unit_price)}
-                  onChangeText={(text) =>
-                    setTempItem((prev) => ({
-                      ...prev,
-                      unit_price: parseFloat(text) || 0,
-                    }))
-                  }
+                  value={unitPriceInput}
+                  onChangeText={(text) => {
+                    if (text === "" || /^\d*\.?\d*$/.test(text)) {
+                      setUnitPriceInput(text);
+                    }
+                  }}
                   placeholder="Preço Unitário"
                   placeholderTextColor="#a0a0a0"
-                  keyboardType="numeric"
+                  keyboardType="decimal-pad"
                   style={styles.input}
                 />
 

@@ -97,7 +97,6 @@ export default function CalendarModal({
     const newSelectedDates = { ...billDates };
 
     if (!startDate || (startDate && endDate)) {
-      // Start new
       setStartDate(date);
       setEndDate(null);
       newSelectedDates[date] = {
@@ -110,33 +109,33 @@ export default function CalendarModal({
       };
       setSelectedDates(newSelectedDates);
     } else {
-      const rangeSelection: any = {};
       const start = new Date(startDate);
       const end = new Date(date);
 
-      if (start > end) {
-        start.setDate(end.getDate());
-        end.setDate(start.getDate());
-      }
+      const actualStart = start < end ? start : end;
+      const actualEnd = start < end ? end : start;
+
+      const rangeSelection: any = {};
+      const current = new Date(actualStart);
 
       const formatDate = (d: Date) => d.toISOString().split("T")[0];
 
-      const current = new Date(start);
-      while (current <= end) {
+      while (current <= actualEnd) {
         const currentDate = formatDate(new Date(current));
         rangeSelection[currentDate] = {
           ...billDates[currentDate],
           selected: true,
           color: "#F47A64",
           textColor: "white",
-          startingDay: currentDate === formatDate(start),
-          endingDay: currentDate === formatDate(end),
+          startingDay: currentDate === formatDate(actualStart),
+          endingDay: currentDate === formatDate(actualEnd),
         };
         current.setDate(current.getDate() + 1);
       }
 
       setSelectedDates({ ...billDates, ...rangeSelection });
-      setEndDate(date);
+      setStartDate(formatDate(actualStart));
+      setEndDate(formatDate(actualEnd));
     }
   };
 

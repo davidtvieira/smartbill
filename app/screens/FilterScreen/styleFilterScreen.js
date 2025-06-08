@@ -4,7 +4,6 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
   container: {
     flex: 1,
-    
   },
   buttonsContainer: {
     flexDirection: "row",
@@ -67,9 +66,24 @@ export default StyleSheet.create({
     color: theme.colors.text,
     textAlign: 'center',
   },
+  noItemsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
   noItemsText: {
-    fontSize: theme.button.text.medium,
-    color: '#333',
+    fontSize: theme.text.regular,
+    fontFamily: theme.fonts.primary,
+    color: theme.colors.text,  
     textAlign: 'center',
+    marginBottom: 10,
+  },
+  debugText: {
+    fontSize: 12,
+    color: '#666',
+    textAlign: 'center',
+    marginTop: 10,
+    fontStyle: 'italic',
   },
 });

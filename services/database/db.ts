@@ -36,7 +36,7 @@ export const initDB = async () => {
       CREATE TABLE IF NOT EXISTS Product (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        quantity INTEGER NOT NULL,
+        quantity REAL NOT NULL,
         unit_price REAL NOT NULL,
         bill_id INTEGER NOT NULL,
         category_id INTEGER NOT NULL,

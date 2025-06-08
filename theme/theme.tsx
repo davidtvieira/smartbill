@@ -14,7 +14,7 @@ export const theme = {
 
   text: {
     large: 18,
-    medium: 16,
+    regular: 16,
     small: 14,
     color: "white",
   },

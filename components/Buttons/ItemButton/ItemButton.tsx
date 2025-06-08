@@ -6,15 +6,21 @@ export default function ItemButton({
   subtitle,
   value,
   onPress,
+  disabled,
 }: {
   title: string;
   subtitle?: string;
   value?: string;
-  onPress: () => void;
+  onPress?: () => void;
+  disabled?: boolean;
 }) {
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={onPress} style={styles.button}>
+      <TouchableOpacity
+        onPress={onPress}
+        style={styles.button}
+        disabled={disabled}
+      >
         <View style={{ flexDirection: "column" }}>
           <Text style={styles.title}>{title}</Text>
           {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
