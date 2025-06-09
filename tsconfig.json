@@ -13,5 +13,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-, "Components/Buttons/Button-v1/Button.jsx", "app.config.js", "components/Modals/ConfirmationDialog/styleConfirmationDialog.js"  ]
+  ]
 }
