@@ -317,7 +317,6 @@ export const deleteSmartBill = async (smartBillId: number): Promise<boolean> => 
 
     if (!smartBill) {
       await db.runAsync('ROLLBACK');
-      console.log('SmartBill not found:', smartBillId);
       return false;
     }
 

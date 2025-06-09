@@ -69,7 +69,6 @@ export default function SettingUpSmartBill() {
 
     try {
       await insertSmartBill(editedData);
-      console.log("Smart Bill added successfully");
       navigation.navigate("Home" as never);
     } catch (error) {
       console.error("Erro ao inserir Smart Bill:", error);

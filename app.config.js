@@ -2,7 +2,8 @@ import 'dotenv/config';
 
 export default {
   expo: {
-    name: 'smartbill',
+    
+    name: 'Smartbill',
     slug: 'smartbill',
     version: '1.0.0',
     orientation: 'portrait',
@@ -12,8 +13,10 @@ export default {
     newArchEnabled: true,
     ios: {
       supportsTablet: true,
+      bundleIdentifier: 'com.smartbill.smartbill',
     },
     android: {
+      package: 'com.smartbill.smartbill',
       permissions: [
         'CAMERA',
         'READ_EXTERNAL_STORAGE',
@@ -49,6 +52,14 @@ export default {
     },
     extra: {
       apiKey: process.env.API_KEY,
+      eas: {
+        projectId: 'f97edb25-f2fb-472c-adbf-a2add23e4c4a',
+      },
+    },
+    doctor: {
+      reactNativeDirectoryCheck: {
+        listUnknownPackages: false,
+      },
     },
   },
 };
