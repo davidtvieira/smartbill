@@ -22,7 +22,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import styles from "./styleFilterScreen";
+import styles from "./styleSeeAll";
 
 type BaseItem = {
   id: string | number;
@@ -335,6 +335,7 @@ export default function FilterScreen() {
                     color="white"
                   />
                 }
+                variant="primary"
               />
             </View>
           )}
@@ -342,9 +343,17 @@ export default function FilterScreen() {
             <Button
               variant="primary"
               title={
-                dateRange.startDate.toLocaleDateString("pt-PT") +
+                dateRange.startDate.toLocaleDateString("pt-PT", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "2-digit",
+                }) +
                 " - " +
-                dateRange.endDate.toLocaleDateString("pt-PT")
+                dateRange.endDate.toLocaleDateString("pt-PT", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "2-digit",
+                })
               }
               onPress={() => setShowCalendarModal(true)}
               icon={

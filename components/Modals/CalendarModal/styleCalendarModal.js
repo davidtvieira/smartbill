@@ -9,7 +9,7 @@ export default StyleSheet.create({
   },
   modalContent: {
     width: "90%",
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.colors.secondary,
     borderRadius: theme.button.border.radius,
     padding: 20,
     maxHeight: "80%",
@@ -21,7 +21,7 @@ export default StyleSheet.create({
     marginBottom: 15,
   },
   modalTitle: {
-    fontSize: theme.button.text.Primarysize,
+    fontSize: theme.button.text.large,
     fontWeight: "bold",
     color: theme.button.text.color,
   },

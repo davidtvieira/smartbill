@@ -8,6 +8,7 @@ export default StyleSheet.create({
   },
   listContainer: {
     flex:1,
+    paddingTop: 10,
   },
   listContent: {
     gap: 4,
@@ -28,13 +29,15 @@ export default StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
-    alignItems: "center",
     paddingTop: 16,
+    
   },
   titleText: {
     fontSize: theme.button.text.large,
     color: theme.colors.text,
     fontFamily: theme.fonts.bold,
+    marginTop: 50,
+
   },
   loadingText: {
     color: theme.colors.text,

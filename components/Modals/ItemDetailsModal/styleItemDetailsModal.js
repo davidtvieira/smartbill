@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   confirmationDialog: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.colors.secondary,
     padding: 20,
     borderRadius: theme.button.border.radius, 
     alignItems: "center",

@@ -182,7 +182,7 @@ export default function CalendarModal({
             markedDates={selectedDates}
             markingType="period"
             theme={{
-              calendarBackground: theme.colors.primary,
+              calendarBackground: theme.colors.secondary,
               textSectionTitleColor: theme.button.text.color,
               selectedDayBackgroundColor: theme.button.color.primary,
               selectedDayTextColor: theme.button.text.color,

@@ -55,6 +55,7 @@ const prompt = `
     Na informação geral, se um campo não estiver disponivel não adiciones nada, apenas deixa vazio.
     No campo "local", apenas a cidade, não incluas moradas ou números de porta.
     No nome dos produtos, apenas inclui o nome do produto, sem quantidades no nome, a quantidade tem o seu campo próprio.
+    Na quantidade dos produtos, atenta que a quantidade pode ser quantidade ou peso, por isso, valores como 0.500 são possiveis
     O preço de cada produto, normalmente, está do lado direito do talão. Inclui sempre o preço do lado direito do talão, mesmo que este esteja por debaixo do nome.
     Primeiro deves definir a subcategoria e depois a categoria respectiva a essa subcategoria.
     As categorias e subcategorias devem ser uma das pré definidas:

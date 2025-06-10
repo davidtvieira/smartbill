@@ -62,7 +62,7 @@ export default function Index() {
             name="SettingUpSmartBill"
             component={SettingUpSmartBill}
           />
-          <Stack.Screen name="Filter" component={SeeAll} />
+          <Stack.Screen name="SeeAll" component={SeeAll} />
           <Stack.Screen name="Settings" component={Settings} />
         </Stack.Navigator>
       </SafeAreaView>
