@@ -1,7 +1,7 @@
-import { SmartBillData } from "@/app/screens/AddSmartBill/SettingUpSmartBill/SettingUpSmartBill";
+import { SmartBillData } from "@/app/screens/SettingUpSmartBill/SettingUpSmartBill";
+import ItemButton from "@/components/Buttons/ItemButton/ItemButton";
 import React from "react";
 import { Text, View } from "react-native";
-import ItemButton from "../Buttons/ItemButton/ItemButton";
 import styles from "./styleReviewPanel";
 
 interface Props {
@@ -16,8 +16,8 @@ export default function ReviewPanel({
   onItemEditStart,
 }: Props) {
   return (
-    <View style={{ gap: 5 }}>
-      <View>
+    <View style={styles.container}>
+      <View style={{ flex: 1 }}>
         <Text style={styles.title}>Informação Geral</Text>
         <ItemButton
           title={"Local"}
@@ -48,7 +48,7 @@ export default function ReviewPanel({
           onPress={() => onFieldEdit("time")}
         />
       </View>
-      <View>
+      <View style={{ flex: 1 }}>
         <Text style={styles.title}>Produtos</Text>
         {data.items?.map((item, index) => (
           <ItemButton

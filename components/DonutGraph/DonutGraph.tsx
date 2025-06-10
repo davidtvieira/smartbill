@@ -1,7 +1,7 @@
 import { theme } from "@/theme/theme";
 import React from "react";
 import { Text, View } from "react-native";
-import PieChart from "react-native-pie-chart";
+import Svg, { Circle, G, Path } from "react-native-svg";
 import styles from "./styleDonutGraph";
 
 interface DonutGraphProps {
@@ -12,10 +12,48 @@ interface DonutGraphProps {
   }>;
 }
 
+// Converte ângulo polar em coordenadas cartesianas
+const polarToCartesian = (
+  centerX: number,
+  centerY: number,
+  radius: number,
+  angleInDegrees: number
+) => {
+  const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
+
+  return {
+    x: centerX + radius * Math.cos(angleInRadians),
+    y: centerY + radius * Math.sin(angleInRadians),
+  };
+};
+
+// Descreve o caminho SVG para um arco do donut
+const describeArc = (
+  x: number,
+  y: number,
+  radius: number,
+  startAngle: number,
+  endAngle: number
+) => {
+  const start = polarToCartesian(x, y, radius, endAngle);
+  const end = polarToCartesian(x, y, radius, startAngle);
+
+  const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+
+  const d = [
+    `M ${start.x} ${start.y}`,
+    `A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`,
+    `L ${x} ${y}`,
+    "Z",
+  ].join(" ");
+
+  return d;
+};
+
 const DonutGraph = ({ totalSpent, size, content }: DonutGraphProps) => {
   const generateColor = (
     index: number,
-    baseColor: string = theme.button.color.primary
+    baseColor: string = theme.colors.primary
   ): string => {
     const hex = baseColor.replace("#", "");
     const factor = 1 - index * 0.035;
@@ -35,29 +73,62 @@ const DonutGraph = ({ totalSpent, size, content }: DonutGraphProps) => {
     return `#${toHex(rDark)}${toHex(gDark)}${toHex(bDark)}`;
   };
 
-  const series = content.map((item, index) => ({
-    value: item.total_spent,
-    color: generateColor(index),
-  }));
+  const radius = size / 2;
+  const innerRadius = radius * 0.6;
+
+  const total = content.reduce((acc, cur) => acc + cur.total_spent, 0);
+
+  let startAngle = 0;
 
   return (
     <View style={styles.container}>
       <View style={styles.chartContainer}>
-        {series.length > 0 && (
-          <PieChart widthAndHeight={size} series={series} cover={0.6} />
-        )}
-        {series.length === 0 && (
-          <PieChart
-            widthAndHeight={size}
-            series={[
-              {
-                value: 1,
-                color: theme.button.color.primary,
-              },
-            ]}
-            cover={0.6}
-          />
-        )}
+        <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+          <G rotation={0} origin={`${radius}, ${radius}`}>
+            {content.length === 1 ? (
+              <Circle
+                cx={radius}
+                cy={radius}
+                r={radius}
+                fill={generateColor(0)}
+              />
+            ) : content.length > 1 ? (
+              content.map((item, index) => {
+                const value = item.total_spent;
+                const angle = (value / total) * 360;
+                const path = describeArc(
+                  radius,
+                  radius,
+                  radius,
+                  startAngle,
+                  startAngle + angle
+                );
+
+                const slice = (
+                  <Path key={index} d={path} fill={generateColor(index)} />
+                );
+
+                startAngle += angle;
+                return slice;
+              })
+            ) : (
+              <Circle
+                cx={radius}
+                cy={radius}
+                r={radius}
+                fill={theme.button.color.secondary}
+              />
+            )}
+
+            <Circle
+              cx={radius}
+              cy={radius}
+              r={innerRadius}
+              fill={theme.colors.secondary}
+            />
+          </G>
+        </Svg>
+
         <View style={styles.numberContainer}>
           <Text style={[styles.number, { fontSize: size / 10 }]}>
             {totalSpent.toFixed(2)}€

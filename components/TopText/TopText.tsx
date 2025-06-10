@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import styles from "./styleTopText";
 
-const MAX_TEXT_LENGTH = 18; // Maximum number of characters to show
+const MAX_TEXT_LENGTH = 18;
 
 interface TopTextProps {
   first?: string;

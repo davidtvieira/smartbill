@@ -3,9 +3,10 @@ import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
     container: {
-      paddingVertical: 20,
+      padding:20,
       alignItems: "center",
       justifyContent: "center",
+      textAlign: "center",
     },
     chartContainer: {
       position: "relative",

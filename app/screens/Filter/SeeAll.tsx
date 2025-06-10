@@ -1,6 +1,6 @@
 import Button from "@/components/Buttons/Button/Button";
 import ItemButton from "@/components/Buttons/ItemButton/ItemButton";
-import DonutGraph from "@/components/DonutGraph/DonutGraph"; // Import DonutGraph
+import DonutGraph from "@/components/DonutGraph/DonutGraph";
 import CalendarModal from "@/components/Modals/CalendarModal/CalendarModal";
 import ItemDetailsModal from "@/components/Modals/ItemDetailsModal/ItemDetailsModal";
 import TopText from "@/components/TopText/TopText";
@@ -23,6 +23,7 @@ import {
   View,
 } from "react-native";
 import styles from "./styleFilterScreen";
+
 type BaseItem = {
   id: string | number;
   name: string;
@@ -357,7 +358,10 @@ export default function FilterScreen() {
           </View>
         </View>
 
-        <ScrollView style={styles.scrollView}>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.listContent}
+        >
           {loading ? (
             <Text style={styles.loadingText}>Carregando...</Text>
           ) : filteredItems.length === 0 ? (
@@ -377,7 +381,13 @@ export default function FilterScreen() {
           )}
         </ScrollView>
       </View>
-
+      <CalendarModal
+        visible={showCalendarModal}
+        onClose={() => setShowCalendarModal(false)}
+        onDateRangeSelected={handleDateRangeSelected}
+        initialStartDate={dateRange.startDate.toISOString().split("T")[0]}
+        initialEndDate={dateRange.endDate.toISOString().split("T")[0]}
+      />
       <ItemDetailsModal
         visible={showItemModal}
         selectedItem={selectedItem}
@@ -389,20 +399,6 @@ export default function FilterScreen() {
           fetchData(selectedOption);
           setShowItemModal(false);
         }}
-      />
-
-      <CalendarModal
-        visible={showCalendarModal}
-        onClose={() => setShowCalendarModal(false)}
-        onDateRangeSelected={(start, end) => {
-          setDateRange({
-            startDate: new Date(start),
-            endDate: new Date(end),
-          });
-          setShowCalendarModal(false);
-        }}
-        initialStartDate={dateRange.startDate.toISOString().split("T")[0]}
-        initialEndDate={dateRange.endDate.toISOString().split("T")[0]}
       />
     </View>
   );

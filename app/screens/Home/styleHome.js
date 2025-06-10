@@ -4,15 +4,13 @@ import { StyleSheet } from "react-native";
 export default StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent:"center",
   },
   listContainer: {
-    flex: 1,
-    maxHeight: 300, 
-    paddingBottom:20
+    flex:1,
   },
   listContent: {
-    gap: 10,
-    paddingBottom: 20, 
+    gap: 4,
   },
   rowButtons: {
     flexDirection: "row",

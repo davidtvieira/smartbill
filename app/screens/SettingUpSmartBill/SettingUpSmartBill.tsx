@@ -54,7 +54,6 @@ export default function SettingUpSmartBill() {
       return;
     }
 
-    // Check for items with quantity or unit_price of 0
     const invalidItems = editedData.items.filter(
       (item) => item.quantity <= 0 || item.unit_price <= 0
     );
@@ -135,13 +134,13 @@ export default function SettingUpSmartBill() {
 
   return (
     <View style={styles.container}>
-      <TopText first="configurar" third="Smart Bill" />
-      <View style={{ padding: 20 }}>
+      <TopText first="Configurar" third="Smart Bill" />
+      <View>
         {!editedData && <ImagePreview imageUri={imageUri} loading={loading} />}
       </View>
 
       {editedData && (
-        <ScrollView keyboardShouldPersistTaps="handled">
+        <ScrollView style={{ flex: 1 }}>
           <ReviewPanel
             data={editedData}
             onFieldEdit={handleFieldEdit}
@@ -160,7 +159,7 @@ export default function SettingUpSmartBill() {
         onItemEdit={handleItemEdit}
         onItemEditFinish={handleItemEditFinish}
       />
-      <View style={{ gap: 10 }}>
+      <View style={{ paddingTop: 20, gap: 10 }}>
         {!editedData && (
           <Button
             title="Transformar em Smart Bill"
@@ -178,9 +177,9 @@ export default function SettingUpSmartBill() {
           )}
 
           <Button
-            title="Adicionar Novamente"
+            title="Voltar"
             onPress={() => navigation.goBack()}
-            variant="secondary"
+            variant="third"
           />
         </View>
       </View>

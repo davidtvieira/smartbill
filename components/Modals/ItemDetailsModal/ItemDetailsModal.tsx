@@ -278,7 +278,7 @@ export default function ItemDetailsModal({
                 title="Apagar"
               />
             )}
-            <Button onPress={onClose} variant="secondary" title="Fechar" />
+            <Button onPress={onClose} variant="third" title="Fechar" />
           </View>
 
           {showDeleteConfirmation && (
@@ -298,7 +298,7 @@ export default function ItemDetailsModal({
                   <View style={styles.confirmationButtonWrapper}>
                     <Button
                       onPress={cancelDelete}
-                      variant="secondary"
+                      variant="third"
                       title="Cancelar"
                     />
                   </View>

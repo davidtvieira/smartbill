@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.colors.secondary,
     padding: 20,
     width: "90%",
     maxHeight:"80%",

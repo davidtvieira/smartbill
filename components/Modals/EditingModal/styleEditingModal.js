@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export default StyleSheet.create({
   input: {
     color: theme.button.text.color,
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: theme.colors.third,
         paddingHorizontal: 10,
         paddingVertical: 8,
         borderRadius: theme.button.border.radius,
@@ -15,16 +15,11 @@ export default StyleSheet.create({
       marginBottom: 5,
       fontWeight: "bold",
     },
-    button: {
+    modal: {
       minWidth: 300,
       padding: 20,
-      backgroundColor: theme.colors.primary,
+      backgroundColor: theme.colors.secondary,
       borderRadius: theme.button.border.radius,
-    },
-    buttonText: {
-      color: theme.button.text.color,
-      fontSize: theme.button.text.Primarysize,
-      fontWeight: "bold",
     },
     container: {
       flex: 1,

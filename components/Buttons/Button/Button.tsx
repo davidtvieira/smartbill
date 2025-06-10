@@ -6,7 +6,7 @@ import styles from "./styleButton";
 interface ButtonProps {
   title?: string;
   onPress: () => void;
-  variant?: "primary" | "secondary" | "onlyText" | "danger";
+  variant?: "primary" | "secondary" | "third" | "onlyText" | "danger";
   disabled?: boolean;
   icon?: ReactNode;
 }
@@ -21,6 +21,7 @@ export default function Button({
   const variantStyles = {
     primary: styles.primary,
     secondary: styles.secondary,
+    third: styles.third,
     onlyText: styles.onlyText,
     danger: styles.danger,
   };

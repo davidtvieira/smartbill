@@ -4,6 +4,7 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "center",
   },
   buttonsContainer: {
     flexDirection: "row",
@@ -20,7 +21,6 @@ export default StyleSheet.create({
     flex:1,
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
   },
   dropdown: {
     position: 'absolute',
@@ -59,7 +59,9 @@ export default StyleSheet.create({
   
   scrollView: {
     flex: 1,
-
+  },
+  listContent: {
+    gap: 4,
   },
   loadingText: {
     fontSize: theme.button.text.medium,

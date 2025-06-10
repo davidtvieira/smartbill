@@ -2,14 +2,13 @@ import { theme } from "@/theme/theme";
 import { StyleSheet } from "react-native";
 export default StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: theme.colors.primary,
+    gap: 20,
+    flex:1,
   },
   title: {
     color: theme.button.text.color,
-    fontSize: theme.button.text.Primarysize,
+    fontSize: theme.button.text.large,
     fontWeight: "bold",
-    marginBottom: 5,
+    marginBottom: 10,
   },
 });

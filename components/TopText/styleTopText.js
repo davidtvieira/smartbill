@@ -3,29 +3,26 @@ import { StyleSheet } from "react-native";
 export default StyleSheet.create({
   mainContainer: {
     flexDirection: "column",
+    alignItems: "center",
   },
   container: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 5,
   },
   first: {
-    textAlign: "center",
-    fontSize: 25,
-    color: theme.colors.third,
+    fontSize: 30,
+    color: theme.colors.primary,
     fontFamily: theme.fonts.bold,
   },
   second: {
-    textAlign: "center",
-    fontSize: 25,
-    color: theme.colors.text,
+    fontSize: 30,
+    color: theme.text.color,
     fontFamily: theme.fonts.bold,
   },
   third: {
-    textAlign: "center",
     fontSize: 40,
-    color: theme.colors.text,
+    color: theme.text.color,
     fontFamily: theme.fonts.bold,
   },
   underline: {

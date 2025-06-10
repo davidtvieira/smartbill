@@ -9,7 +9,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: theme.button.color.secondary,
+    backgroundColor: theme.button.color.third,
     padding: 15,
     borderRadius: theme.button.border.radius,
   },

@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { Linking, Text, TextInput, TouchableOpacity, View } from "react-native";
-import styles from "./styleSettingScreen";
+import styles from "./styleSetting";
 
 const MODEL_OPTIONS = [
   {
@@ -15,7 +15,7 @@ const MODEL_OPTIONS = [
   },
 ];
 
-export default function SettingsScreen() {
+export default function Settings() {
   const navigation = useNavigation();
   const [apiKey, setApiKey] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -81,7 +81,7 @@ export default function SettingsScreen() {
 
   return (
     <View style={styles.container}>
-      <TopText first="Definições" second="na minha" third="Smart Bill" />
+      <TopText first="Definições" second=" na minha" third="Smart Bill" />
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Modelo de IA</Text>
         <View>

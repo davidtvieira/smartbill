@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 import styles from "./styleAddSmartBill";
 
-export default function ImagePicker() {
+export default function AddSmartBill() {
   const navigation = useNavigation() as any;
 
   const handleImagePick = (uri: string) => {

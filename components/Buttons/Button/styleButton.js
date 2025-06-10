@@ -28,6 +28,9 @@ export default StyleSheet.create({
   secondary: {
     backgroundColor: theme.button.color.secondary,
   },
+  third: {
+    backgroundColor: theme.button.color.third,
+  },
   disabled : {
     opacity: theme.button.color.disabled
   },

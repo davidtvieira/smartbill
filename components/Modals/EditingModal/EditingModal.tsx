@@ -1,4 +1,4 @@
-import { SmartBillData } from "@/app/screens/AddSmartBill/SettingUpSmartBill/SettingUpSmartBill";
+import { SmartBillData } from "@/app/screens/SettingUpSmartBill/SettingUpSmartBill";
 import Button from "@/components/Buttons/Button/Button";
 import React, { useEffect, useState } from "react";
 import { Alert } from "react-native";
@@ -180,7 +180,7 @@ const EditingModal: React.FC<{
     >
       <TouchableWithoutFeedback onPress={handleClose}>
         <View style={styles.container}>
-          <Pressable onPress={(e) => e.stopPropagation()} style={styles.button}>
+          <Pressable onPress={(e) => e.stopPropagation()} style={styles.modal}>
             {!isItemEditing && editingField && (
               <>
                 <Text style={styles.label}>

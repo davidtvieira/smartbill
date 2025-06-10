@@ -184,8 +184,6 @@ export default function CalendarModal({
             theme={{
               calendarBackground: theme.colors.primary,
               textSectionTitleColor: theme.button.text.color,
-              textSectionTitleFontFamily: theme.fonts.bold,
-              textSectionTitleFontSize: theme.button.text.large,
               selectedDayBackgroundColor: theme.button.color.primary,
               selectedDayTextColor: theme.button.text.color,
               todayTextColor: theme.button.color.primary,
