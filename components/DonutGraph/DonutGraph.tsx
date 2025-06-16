@@ -12,7 +12,6 @@ interface DonutGraphProps {
   }>;
 }
 
-// Converte ângulo polar em coordenadas cartesianas
 const polarToCartesian = (
   centerX: number,
   centerY: number,
@@ -27,7 +26,6 @@ const polarToCartesian = (
   };
 };
 
-// Descreve o caminho SVG para um arco do donut
 const describeArc = (
   x: number,
   y: number,
@@ -116,7 +114,7 @@ const DonutGraph = ({ totalSpent, size, content }: DonutGraphProps) => {
                 cx={radius}
                 cy={radius}
                 r={radius}
-                fill={theme.button.color.secondary}
+                fill={theme.button.color.secondary} // efeito donut
               />
             )}
 
@@ -124,7 +122,7 @@ const DonutGraph = ({ totalSpent, size, content }: DonutGraphProps) => {
               cx={radius}
               cy={radius}
               r={innerRadius}
-              fill={theme.colors.secondary}
+              fill={theme.colors.secondary} // efeito donut
             />
           </G>
         </Svg>

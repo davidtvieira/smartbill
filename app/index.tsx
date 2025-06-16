@@ -6,8 +6,8 @@ import { useEffect } from "react";
 import { ActivityIndicator, StatusBar } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import AddSmartBill from "./screens/AddSmartBill/AddSmartBill";
-import SeeAll from "./screens/Filter/SeeAll";
-import HomeScreen from "./screens/Home/Home";
+import HomeScreen from "./screens/HomeScreen/HomeScreen";
+import SeeAll from "./screens/SeeAll/SeeAll";
 import Settings from "./screens/Settings/Settings";
 import SettingUpSmartBill from "./screens/SettingUpSmartBill/SettingUpSmartBill";
 
@@ -43,7 +43,7 @@ export default function Index() {
 
   return (
     <SafeAreaProvider>
-      <StatusBar barStyle="dark-content" backgroundColor={backgroundColor} />
+      <StatusBar barStyle="dark-content" />
       <SafeAreaView style={{ flex: 1 }}>
         <Stack.Navigator
           screenOptions={{
@@ -56,7 +56,7 @@ export default function Index() {
             },
           }}
         >
-          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="HomeScreen" component={HomeScreen} />
           <Stack.Screen name="AddSmartBill" component={AddSmartBill} />
           <Stack.Screen
             name="SettingUpSmartBill"

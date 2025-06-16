@@ -1,7 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-type AIModel = "gemini-1.5-flash" | "gemini-1.5-pro";
-
 const DEFAULT_MODEL_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
@@ -55,7 +53,7 @@ const prompt = `
     Na informação geral, se um campo não estiver disponivel não adiciones nada, apenas deixa vazio.
     No campo "local", apenas a cidade, não incluas moradas ou números de porta.
     No nome dos produtos, apenas inclui o nome do produto, sem quantidades no nome, a quantidade tem o seu campo próprio.
-    Na quantidade dos produtos, atenta que a quantidade pode ser quantidade ou peso, por isso, valores como 0.500 são possiveis
+    Na quantidade dos produtos, a quantidade pode ser tanto quantidade como peso, por isso, valores como 0.500 são possiveis.
     O preço de cada produto, normalmente, está do lado direito do talão. Inclui sempre o preço do lado direito do talão, mesmo que este esteja por debaixo do nome.
     Primeiro deves definir a subcategoria e depois a categoria respectiva a essa subcategoria.
     As categorias e subcategorias devem ser uma das pré definidas:
@@ -100,7 +98,8 @@ const prompt = `
 
       Quando achares que o produto não se encaixa em nenhuma dessas subcategorias atribui aquela que achas mais proxima da verdadeira, nunca deixes nenhum campo vazio.
 
-    Sempre que encontrares palavras que não reconheças junto de outras, ignora, 
+    Sempre que encontrares palavras que não reconheças junto de outras, ignora, não adiciones nada.
+    Antes de me devolveres a resposta, soma todos os produtos e compara com o total da compra, se algo te parecer estranho tenta novamente reconhecer o texto, talvez tenhas cometido um erro.
   `;
 
 export async function Api_Call(imageUri: string): Promise<{

@@ -1,7 +1,8 @@
 import { SmartBillData } from "@/app/screens/SettingUpSmartBill/SettingUpSmartBill";
 import Button from "@/components/Buttons/Button/Button";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useEffect, useState } from "react";
-import { Alert } from "react-native";
+import { Alert, Platform } from "react-native";
 import styles from "./styleEditingModal";
 
 import {
@@ -44,6 +45,8 @@ const EditingModal: React.FC<{
   const [tempValue, setTempValue] = useState<string>(
     editedData?.[editingField as keyof SmartBillData]?.toString() || ""
   );
+  const [showPicker, setShowPicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [tempItem, setTempItem] = useState<ReceiptItem>({
     name: "",
     quantity: 0,
@@ -87,6 +90,43 @@ const EditingModal: React.FC<{
       setTempValue(typeof value === "string" ? value : String(value || ""));
     }
   }, [visible, editingField, isItemEditing, itemIndex, editedData]);
+
+  const handleDateChange = (event: any, selectedDate?: Date) => {
+    setShowPicker(Platform.OS === "ios");
+    if (selectedDate) {
+      setSelectedDate(selectedDate);
+      if (editingField === "date") {
+        const day = selectedDate.getDate().toString().padStart(2, "0");
+        const month = (selectedDate.getMonth() + 1).toString().padStart(2, "0");
+        const year = selectedDate.getFullYear();
+        const formattedDate = `${day}-${month}-${year}`;
+        setTempValue(formattedDate);
+      } else if (editingField === "time") {
+        const hours = selectedDate.getHours().toString().padStart(2, "0");
+        const minutes = selectedDate.getMinutes().toString().padStart(2, "0");
+        const formattedTime = `${hours}:${minutes}`;
+        setTempValue(formattedTime);
+      }
+    }
+  };
+
+  const showDateTimePicker = () => {
+    setShowPicker(true);
+  };
+
+  const renderDateTimePicker = () => {
+    if (!showPicker) return null;
+
+    return (
+      <DateTimePicker
+        value={selectedDate}
+        mode={editingField === "date" ? "date" : "time"}
+        display={Platform.OS === "ios" ? "spinner" : "default"}
+        onChange={handleDateChange}
+        style={styles.dateTimePicker}
+      />
+    );
+  };
 
   const formatDate = (input: string) => {
     const numbers = input.replace(/\D/g, "");
@@ -189,33 +229,52 @@ const EditingModal: React.FC<{
                   {editingField === "date" && "Data"}
                   {editingField === "time" && "Hora"}
                 </Text>
-                <TextInput
-                  value={tempValue}
-                  onChangeText={(text) => handleInputChange(text, editingField)}
-                  placeholder={
-                    editingField === "local"
-                      ? "Ex: Continente de Lisboa"
-                      : editingField === "establishment"
-                      ? "Ex: Continente"
-                      : editingField === "date"
-                      ? "DD-MM-AAAA"
-                      : "HH:MM"
-                  }
-                  placeholderTextColor="#a0a0a0"
-                  style={styles.input}
-                  keyboardType={
-                    editingField === "date" || editingField === "time"
-                      ? "numeric"
-                      : "default"
-                  }
-                  maxLength={
-                    editingField === "date"
-                      ? 10
-                      : editingField === "time"
-                      ? 5
-                      : undefined
-                  }
-                />
+                {editingField === "date" || editingField === "time" ? (
+                  <>
+                    <Pressable
+                      onPress={showDateTimePicker}
+                      style={styles.dateTimeInput}
+                    >
+                      <Text style={styles.dateTimeText}>
+                        {tempValue ||
+                          (editingField === "date"
+                            ? "Selecione a data"
+                            : "Selecione a hora")}
+                      </Text>
+                    </Pressable>
+                    {renderDateTimePicker()}
+                  </>
+                ) : (
+                  <TextInput
+                    value={tempValue}
+                    onChangeText={(text) =>
+                      handleInputChange(text, editingField)
+                    }
+                    placeholder={
+                      editingField === "local"
+                        ? "Ex: Continente de Lisboa"
+                        : editingField === "establishment"
+                        ? "Ex: Continente"
+                        : editingField === "date"
+                        ? "DD-MM-AAAA"
+                        : "HH:MM"
+                    }
+                    placeholderTextColor="#a0a0a0"
+                    style={styles.input}
+                    keyboardType={
+                      editingField === "date" || editingField === "time"
+                        ? "numeric"
+                        : "default"
+                    }
+                    maxLength={
+                      editingField === "date"
+                        ? 10
+                        : editingField === "time"
+                        ? 5
+                        : undefined
+                    }
+                  />
+                )}
               </>
             )}
 
