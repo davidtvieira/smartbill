@@ -26,6 +26,7 @@ export default function Settings() {
     type: "success" | "error";
   } | null>(null);
 
+  // useEffect para buscar dados
   useEffect(() => {
     const loadSettings = async () => {
       try {
@@ -44,6 +45,7 @@ export default function Settings() {
     loadSettings();
   }, []);
 
+  // Função para salvar as configurações
   const handleSave = async () => {
     if (!apiKey.trim()) {
       setSaveMessage({
@@ -74,6 +76,7 @@ export default function Settings() {
     }
   };
 
+  // Função para obter o modelo
   const getModelDisplayName = (url: string) => {
     const model = MODEL_OPTIONS.find((opt) => opt.value === url);
     return model ? model.label : "Modelo personalizado";
@@ -116,6 +119,7 @@ export default function Settings() {
           <Text style={styles.label}>Chave da API</Text>
           <TouchableOpacity
             onPress={() =>
+              // Abre a página de ajuda para ter a chave da API
               Linking.openURL(
                 "https://ai.google.dev/gemini-api/docs/get-started/tutorial?lang=web&hl=pt"
               )

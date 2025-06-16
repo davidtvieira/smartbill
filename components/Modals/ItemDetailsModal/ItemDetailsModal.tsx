@@ -4,7 +4,7 @@ import {
   getProductsBySmartBill,
 } from "@/services/database/queries";
 import { MaterialIcons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Modal, ScrollView, Text, View } from "react-native";
 import styles from "./styleItemDetailsModal";
 
@@ -31,10 +31,10 @@ export default function ItemDetailsModal({
   onClose,
   onDelete,
 }: ItemDetailsModalProps) {
-  const [products, setProducts] = React.useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-
-  React.useEffect(() => {
+  // Função para carregar os produtos
+  useEffect(() => {
     if (selectedOption === "smartbills" && selectedItem?.id) {
       getProductsBySmartBill(selectedItem.id).then((products) => {
         setProducts(
@@ -52,10 +52,12 @@ export default function ItemDetailsModal({
     }
   }, [selectedOption, selectedItem?.id]);
 
+  // Função para apagar a fatura
   const handleDelete = () => {
     setShowDeleteConfirmation(true);
   };
 
+  // Função para confirmar a apagada da fatura
   const confirmDelete = async () => {
     if (selectedItem?.id) {
       try {
@@ -76,6 +78,7 @@ export default function ItemDetailsModal({
     }
   };
 
+  // Função para cancelar a apagada da fatura
   const cancelDelete = () => {
     setShowDeleteConfirmation(false);
   };
@@ -89,6 +92,7 @@ export default function ItemDetailsModal({
     >
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
+          {/* Modal de detalhes de um produto */}
           {(selectedOption === "products" ||
             selectedOption === "subcategory-products") &&
             selectedItem && (
@@ -102,6 +106,7 @@ export default function ItemDetailsModal({
                     </Text>
                   </View>
                 )}
+
                 {selectedItem.category_name && (
                   <View style={styles.container}>
                     <Text style={styles.modalText}>Categoria:</Text>
@@ -172,7 +177,7 @@ export default function ItemDetailsModal({
                 )}
               </View>
             )}
-
+          {/* Modal de detalhes de uma fatura */}
           {selectedOption === "smartbills" && selectedItem && (
             <ScrollView>
               <View style={{ paddingBottom: 20 }}>
@@ -229,6 +234,7 @@ export default function ItemDetailsModal({
                 </View>
               </View>
               <View>
+                {/* Lista de produtos */}
                 {products.map((product, index) => (
                   <View style={{ paddingVertical: 10 }} key={index}>
                     {index > 0 && <View />}

@@ -33,14 +33,21 @@ export default function CalendarModal({
       dotColor?: string;
     };
   }>({});
+
+  // Função para definir o estado do calendário inicial
   const [startDate, setStartDate] = React.useState<string | null>(
     initialStartDate || null
   );
+
+  // Função para definir o estado do calendário final
   const [endDate, setEndDate] = React.useState<string | null>(
     initialEndDate || null
   );
+
+  // Função para definir o estado das datas das smartbills
   const [billDates, setBillDates] = useState<{ [key: string]: any }>({});
 
+  // Função para definir o estado das datas selecionadas
   useEffect(() => {
     const fetchBills = async () => {
       try {
@@ -60,7 +67,7 @@ export default function CalendarModal({
 
         setBillDates(dates);
 
-        // Initialize selected dates with initial range if provided
+        // Inicializa as datas selecionadas com o intervalo inicial se fornecido
         const initialDates = { ...dates };
         if (initialStartDate && initialEndDate) {
           const start = new Date(initialStartDate);
@@ -92,6 +99,7 @@ export default function CalendarModal({
     }
   }, [visible, initialStartDate, initialEndDate]);
 
+  // Função para lidar com a seleção de uma data
   const handleDayPress = (day: DateData) => {
     const date = day.dateString;
     const newSelectedDates = { ...billDates };
@@ -139,6 +147,7 @@ export default function CalendarModal({
     }
   };
 
+  // Função para aplicar a seleção
   const handleApply = () => {
     if (startDate && endDate) {
       const start = new Date(startDate);

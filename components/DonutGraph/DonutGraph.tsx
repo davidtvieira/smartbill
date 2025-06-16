@@ -12,6 +12,7 @@ interface DonutGraphProps {
   }>;
 }
 
+// Função para converter coordenadas polares para cartesianas
 const polarToCartesian = (
   centerX: number,
   centerY: number,
@@ -26,6 +27,7 @@ const polarToCartesian = (
   };
 };
 
+// Função para descrever um arco
 const describeArc = (
   x: number,
   y: number,
@@ -49,6 +51,7 @@ const describeArc = (
 };
 
 const DonutGraph = ({ totalSpent, size, content }: DonutGraphProps) => {
+  // Função para gerar a cor para cada slice
   const generateColor = (
     index: number,
     baseColor: string = theme.colors.primary
@@ -71,9 +74,11 @@ const DonutGraph = ({ totalSpent, size, content }: DonutGraphProps) => {
     return `#${toHex(rDark)}${toHex(gDark)}${toHex(bDark)}`;
   };
 
+  // Função para calcular o raio
   const radius = size / 2;
   const innerRadius = radius * 0.6;
 
+  // Função para calcular o total
   const total = content.reduce((acc, cur) => acc + cur.total_spent, 0);
 
   let startAngle = 0;
@@ -84,6 +89,7 @@ const DonutGraph = ({ totalSpent, size, content }: DonutGraphProps) => {
         <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
           <G rotation={0} origin={`${radius}, ${radius}`}>
             {content.length === 1 ? (
+              // Função para desenhar um círculo
               <Circle
                 cx={radius}
                 cy={radius}
@@ -91,6 +97,7 @@ const DonutGraph = ({ totalSpent, size, content }: DonutGraphProps) => {
                 fill={generateColor(0)}
               />
             ) : content.length > 1 ? (
+              // Função para desenhar um slice
               content.map((item, index) => {
                 const value = item.total_spent;
                 const angle = (value / total) * 360;

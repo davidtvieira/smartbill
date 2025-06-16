@@ -24,6 +24,7 @@ import {
 } from "react-native";
 import styles from "./styleSeeAll";
 
+//Estrutura generica
 type BaseItem = {
   id: string | number;
   name: string;
@@ -31,6 +32,7 @@ type BaseItem = {
   [key: string]: any;
 };
 
+//Tipos de dados
 export type DataType =
   | "products"
   | "establishments"
@@ -88,6 +90,7 @@ export default function FilterScreen() {
     { label: "Smartbills", value: "smartbills" as const },
   ];
 
+  // Objeto que mapeia os dados
   type DataMapper<T> = {
     fetchFn: () => Promise<T[]>;
     totalSpent: (item: T) => number;
@@ -96,6 +99,7 @@ export default function FilterScreen() {
     renderSubtitle?: (item: T) => string;
   };
 
+  // Mapeamento de dados
   const dataMappers: Record<DataType, DataMapper<any>> = {
     products: {
       fetchFn: () => getProducts(firstDay, lastDay),
@@ -156,6 +160,7 @@ export default function FilterScreen() {
     },
   };
 
+  // Função para buscar dados
   const fetchData = async (type: DataType) => {
     try {
       setLoading(true);
@@ -180,6 +185,7 @@ export default function FilterScreen() {
     }
   };
 
+  // Função para lidar com a navegação da pagina
   const handleItemPress = (item: any) => {
     if (
       selectedOption === "products" ||
@@ -210,6 +216,7 @@ export default function FilterScreen() {
     }
   };
 
+  // Função para lidar com a seleção de uma opção
   const handleOptionSelect = (option: DataType) => {
     setSelectedOption(option);
     setSelectedEstablishment(null);
@@ -222,6 +229,7 @@ export default function FilterScreen() {
     setShowDropdown(false);
   };
 
+  // useEffect para buscar dados
   useEffect(() => {
     fetchData(selectedOption);
   }, [
@@ -232,15 +240,18 @@ export default function FilterScreen() {
     dateRange,
   ]);
 
+  // Função para truncar o nome
   const truncateName = (name: string, maxLength: number = 25) => {
     if (name.length <= maxLength) return name;
     return name.substring(0, maxLength - 3) + "...";
   };
 
+  // Filtrar os itens
   const filteredItems = data.filter((item) =>
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Função para lidar com a seleção de uma data
   const handleDateRangeSelected = (startDate: string, endDate: string) => {
     setDateRange({
       startDate: new Date(startDate),

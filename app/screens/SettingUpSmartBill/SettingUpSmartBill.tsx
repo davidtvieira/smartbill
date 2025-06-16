@@ -10,6 +10,7 @@ import React, { useState } from "react";
 import { Alert, ScrollView, View } from "react-native";
 import styles from "./styleSettingUpSmartBill";
 
+// Tipos de dados
 export type SmartBillData = {
   local: string;
   establishment: string;
@@ -35,6 +36,7 @@ export default function SettingUpSmartBill() {
   const [modalVisible, setModalVisible] = useState(false);
   const [isItemEditing, setIsItemEditing] = useState(false);
 
+  // Função para salvar a Smart Bill
   const handleSaveSmartBill = async () => {
     if (!editedData) return;
 
@@ -68,23 +70,26 @@ export default function SettingUpSmartBill() {
 
     try {
       await insertSmartBill(editedData);
-      navigation.navigate("Home" as never);
+      navigation.navigate("HomeScreen" as never);
     } catch (error) {
       console.error("Erro ao inserir Smart Bill:", error);
     }
   };
 
+  // Função para editar um campo
   const handleFieldEdit = (field: keyof SmartBillData) => {
     setEditingField(field);
     setModalVisible(true);
   };
 
+  // Função para atualizar um campo
   const handleFieldChange = (field: keyof SmartBillData, value: string) => {
     setEditedData((prevData) =>
       prevData ? { ...prevData, [field]: value } : null
     );
   };
 
+  // Função para editar um item
   const handleItemEdit = (
     index: number,
     field: "name" | "quantity" | "unit_price" | "category" | "sub_category",
@@ -110,16 +115,19 @@ export default function SettingUpSmartBill() {
     );
   };
 
+  // Função para iniciar a edição de um item
   const handleItemEditStart = (index: number) => {
     setEditingField(`item-${index}`);
     setIsItemEditing(true);
     setModalVisible(true);
   };
 
+  // Função para finalizar a edição de um item
   const handleItemEditFinish = () => {
     setIsItemEditing(false);
   };
 
+  // Função para processar a imagem
   const handleImageProcessing = async () => {
     setLoading(true);
     try {

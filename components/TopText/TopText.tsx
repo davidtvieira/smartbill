@@ -24,6 +24,7 @@ export default function TopText({
   clickable = false,
   onClick,
 }: TopTextProps) {
+  // Função para truncar o texto
   const truncatedFirst =
     first && first.length > MAX_TEXT_LENGTH
       ? `${first.substring(0, MAX_TEXT_LENGTH)}...`

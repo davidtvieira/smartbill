@@ -10,6 +10,7 @@ interface ImagePickerMenuProps {
 export default function ImagePickerMenu({
   onImagePicked,
 }: ImagePickerMenuProps) {
+  // Função para escolher uma imagem
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
@@ -23,6 +24,7 @@ export default function ImagePickerMenu({
     }
   };
 
+  // Função para tirar uma foto
   const takePhoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {

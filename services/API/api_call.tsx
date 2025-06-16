@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const DEFAULT_MODEL_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
+// Função para obter a chave da API
 async function getApiKey(): Promise<string> {
   try {
     const apiKey = await AsyncStorage.getItem("geminiApiKey");
@@ -16,6 +17,7 @@ async function getApiKey(): Promise<string> {
   }
 }
 
+// Função para obter o endpoint do modelo
 async function getModelEndpoint(): Promise<string> {
   try {
     const savedEndpoint = await AsyncStorage.getItem("aiModelEndpoint");
@@ -26,6 +28,7 @@ async function getModelEndpoint(): Promise<string> {
   }
 }
 
+// Prompt para a API
 const prompt = `
     Extrai da imagem o conteúdo do recibo em formato JSON.
     Não incluas aspas na tua resposta, sejam simples ou duplas.
@@ -120,19 +123,20 @@ export async function Api_Call(imageUri: string): Promise<{
       getApiKey(),
       getModelEndpoint(),
     ]);
-
+    // Função para obter a resposta da API
     const response = await fetch(imageUri);
+    // Função para converter a resposta para blob
     const blob = await response.blob();
-
+    // Função para converter o blob para base64
     const base64data = await new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(reader.result as string);
       reader.onerror = reject;
       reader.readAsDataURL(blob);
     });
-
+    // Função para obter a imagem base64
     const base64Image = base64data.split(",")[1];
-
+    // Função para obter o payload
     const payload = {
       contents: [
         {
@@ -148,7 +152,7 @@ export async function Api_Call(imageUri: string): Promise<{
         },
       ],
     };
-
+    // Função para obter a resposta da API
     const geminiResponse = await fetch(`${modelEndpoint}?key=${apiKey}`, {
       method: "POST",
       headers: {
@@ -156,9 +160,9 @@ export async function Api_Call(imageUri: string): Promise<{
       },
       body: JSON.stringify(payload),
     });
-
+    // Função para obter a resposta da API e converter para json
     const result = await geminiResponse.json();
-
+    // Função para verificar se a resposta da API é válida
     if (
       !geminiResponse.ok ||
       !result.candidates?.[0]?.content?.parts?.[0]?.text
@@ -167,6 +171,7 @@ export async function Api_Call(imageUri: string): Promise<{
     }
 
     const extractedText = result.candidates[0].content.parts[0].text;
+    // Função para devolver a resposta da API
     return JSON.parse(extractedText);
   } catch (error) {
     console.error("Error in Api_Call:", error);

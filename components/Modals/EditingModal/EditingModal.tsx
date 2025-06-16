@@ -61,6 +61,7 @@ const EditingModal: React.FC<{
     ? parseInt(editingField.split("-")[1])
     : null;
 
+  // Função para definir o estado do modal
   useEffect(() => {
     if (!visible) {
       setQuantityInput("");
@@ -78,6 +79,7 @@ const EditingModal: React.FC<{
 
     if (!editedData) return;
 
+    // Função para definir o estado do item
     if (isItemEditing && itemIndex !== null) {
       const item = editedData?.items?.[itemIndex];
       if (item) {
@@ -91,6 +93,7 @@ const EditingModal: React.FC<{
     }
   }, [visible, editingField, isItemEditing, itemIndex, editedData]);
 
+  // Função para lidar com a seleção de uma data
   const handleDateChange = (event: any, selectedDate?: Date) => {
     setShowPicker(Platform.OS === "ios");
     if (selectedDate) {
@@ -110,10 +113,12 @@ const EditingModal: React.FC<{
     }
   };
 
+  // Função para mostrar o picker de data e hora
   const showDateTimePicker = () => {
     setShowPicker(true);
   };
 
+  // Função para renderizar o picker de data e hora
   const renderDateTimePicker = () => {
     if (!showPicker) return null;
 
@@ -128,6 +133,7 @@ const EditingModal: React.FC<{
     );
   };
 
+  // Função para formatar a data
   const formatDate = (input: string) => {
     const numbers = input.replace(/\D/g, "");
     let formatted = numbers.slice(0, 2);
@@ -140,6 +146,7 @@ const EditingModal: React.FC<{
     return formatted;
   };
 
+  // Função para formatar a hora
   const formatTime = (input: string) => {
     const numbers = input.replace(/\D/g, "");
     let formatted = numbers.slice(0, 2);
@@ -149,6 +156,7 @@ const EditingModal: React.FC<{
     return formatted;
   };
 
+  // Função para lidar com a alteração do input
   const handleInputChange = (text: string, field: string) => {
     if (field === "date") {
       setTempValue(formatDate(text));
@@ -159,6 +167,7 @@ const EditingModal: React.FC<{
     }
   };
 
+  // Função para fechar o modal
   const handleClose = () => {
     setQuantityInput("");
     setUnitPriceInput("");
@@ -175,6 +184,7 @@ const EditingModal: React.FC<{
     onItemEditFinish();
   };
 
+  // Função para atualizar o modal
   const handleUpdate = () => {
     if (editingField === "date" && tempValue) {
       const dateRegex = /^\d{2}-\d{2}-\d{4}$/;
@@ -187,6 +197,7 @@ const EditingModal: React.FC<{
       }
     }
 
+    // Função para lidar com a alteração do input
     if (editingField === "time" && tempValue) {
       const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
       if (!timeRegex.test(tempValue)) {
@@ -198,6 +209,7 @@ const EditingModal: React.FC<{
       }
     }
 
+    // Função para lidar com a alteração do input
     if (isItemEditing && itemIndex !== null) {
       onItemEdit(itemIndex, "name", tempItem.name);
       onItemEdit(itemIndex, "quantity", quantityInput);
@@ -223,6 +235,7 @@ const EditingModal: React.FC<{
           <Pressable onPress={(e) => e.stopPropagation()} style={styles.modal}>
             {!isItemEditing && editingField && (
               <>
+                {/* Label */}
                 <Text style={styles.label}>
                   {editingField === "local" && "Local"}
                   {editingField === "establishment" && "Estabelecimento"}
@@ -277,7 +290,7 @@ const EditingModal: React.FC<{
                 )}
               </>
             )}
-
+            {/* Item Editing */}
             {isItemEditing && itemIndex !== null && (
               <>
                 <Text style={styles.label}>Nome do Produto</Text>
