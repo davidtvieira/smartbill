@@ -1,6 +1,6 @@
 # Welcome to Smart Bill 👋
 
-![Smart Bill Icon](./assets/images/icon.png)
+<img src="./assets/images/icon.png" alt="Smart Bill Icon" width="120" />
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
